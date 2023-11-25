@@ -1,0 +1,8 @@
+'id','nama_produk','satuan','kategori'
+1,Daging Ternak,kg,ternak
+2,Ternak Potong,ekor,ternak
+3,Susu Segar,liter,susu
+4,Susu Pasteurisasi,liter,susu
+5,Susu Kefir,liter,susu
+6,Yogurt,liter,susu
+7,Keju,kg,susu
