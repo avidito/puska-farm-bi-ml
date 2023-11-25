@@ -1,0 +1,13 @@
+'id','nama_pengepul','jenkel','pendidikan','tgl_lahir','jenis_pengepul','provinsi_id','kota_id','kecamatan_id','created_at','updated_at','deleted_at','created_by','updated_by','deleted_by','id_unit_ternak'
+1,Pengepul M,Pria,Sekolah Menengah Atas,2023-02-19,Ternak Potong,'44156','47346','47447',2023-02-19 15:45:06.000,2023-02-19 15:45:06.000,NULL,NULL,NULL,NULL,14
+2,Pengepul N,Wanita,Sekolah Menengah Atas,2023-02-19,Ternak Potong,'44156','47346','47447',2023-02-19 15:46:40.000,2023-02-19 15:46:40.000,NULL,NULL,NULL,NULL,14
+3,Pengepul G,Pria,Sekolah Menengah Atas,2023-02-19,Ternak Potong,'44156','47346','47588',2023-02-19 16:00:07.000,2023-02-19 16:00:07.000,NULL,NULL,NULL,NULL,12
+4,Pengepul A,Pria,Sekolah Menengah Pertama,2023-02-20,Susu,'44156','46199','46315',2023-02-20 00:14:59.000,2023-02-20 00:14:59.000,NULL,NULL,NULL,NULL,7
+5,Budi Farm,Pria,Sekolah Menengah Atas,2023-02-20,Susu,'44156','46199','46200',2023-02-20 01:18:08.000,2023-02-20 01:18:08.000,NULL,NULL,NULL,NULL,4
+6,Pengepul E,Pria,Sekolah Menengah Pertama,2023-02-20,Susu,'44156','46199','46315',2023-02-20 05:53:22.000,2023-02-20 05:53:22.000,NULL,NULL,NULL,NULL,9
+7,Pengepul f,Wanita,Sekolah Menengah Atas,2023-02-20,Susu,'44156','46199','46315',2023-02-20 05:53:53.000,2023-02-20 05:53:53.000,NULL,NULL,NULL,NULL,9
+8,Pengepul O,Pria,Sekolah Menengah Atas,2023-02-20,Ternak Potong,'44156','47346','47415',2023-02-20 09:24:53.000,2023-02-20 09:24:53.000,NULL,NULL,NULL,NULL,15
+9,Andi,Pria,Sekolah Menengah Atas,2023-03-02,Susu,'44156','46199','46294',2023-03-01 18:06:46.000,2023-03-01 18:06:46.000,NULL,NULL,NULL,NULL,5
+10,Budiman,Pria,Sekolah Menengah Atas,2023-03-02,Susu,'44156','46199','46294',2023-03-01 18:08:29.000,2023-03-01 18:08:29.000,NULL,NULL,NULL,NULL,5
+11,Pak Apud,Pria,Sekolah Menengah Atas,2000-10-10,Ternak Potong,'44156','53021','53049',2023-05-30 17:39:18.000,2023-05-30 17:39:18.000,NULL,NULL,NULL,NULL,1
+12,Wiro Asep,Pria,Sekolah Menengah Atas,2023-06-10,Susu,'44156','46199','46294',2023-06-10 09:21:45.000,2023-06-10 09:21:45.000,NULL,NULL,NULL,NULL,5

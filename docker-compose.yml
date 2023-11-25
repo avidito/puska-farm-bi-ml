@@ -1,0 +1,14 @@
+version: '3'
+services:
+  ops-db:
+    image: avidito/puska-ops-db:1.0
+    environment:
+      - POSTGRES_USER=${OPS_DB_USER:-puska}
+      - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
+      - POSTGRES_DB=${OPS_DB_NAME:-puska}
+    ports:
+      - 5600:5432
+    volumes:
+      - puska-ops-db:/var/lib/postgresql/data
+volumes:
+  puska-ops-db:
