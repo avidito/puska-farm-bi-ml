@@ -7,7 +7,7 @@ CREATE TABLE fact_distribusi (
     harga_minimum INT8,
     harga_maximum INT8,
     harga_rata_rata NUMERIC(10,3),
-    jumlah_penjulan INT8,
+    jumlah_penjualan INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
     CONSTRAINT fact_distribusi_pkey PRIMARY KEY(id_unit_ternak, id_mitra_bisnis, id_jenis_produk, tanggal)
