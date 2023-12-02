@@ -27,7 +27,7 @@ services:
       - puska-db-dwh:/var/lib/postgresql/data
   
   etl-batch:
-    # image: avidito/puska-etl-batch:1.0-beam
+    image: avidito/puska-etl-batch:1.0-beam2.52.0
     build:
       context: ./services/etl-batch
     environment:
