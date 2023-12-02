@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE dim_jenis_produk (
     id INT8,
     nama_produk VARCHAR(100),

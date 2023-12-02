@@ -11,8 +11,10 @@ services:
     volumes:
       - puska-ops-db:/var/lib/postgresql/data
 
-  dwh-db:
-    image: avidito/puska-dwh-db:1.0
+  db-dwh:
+    image: avidito/puska-db-dwh:1.0-postgres15.3
+    build:
+      context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
@@ -20,7 +22,7 @@ services:
     ports:
       - 5601:5432
     volumes:
-      - puska-dwh-db:/var/lib/postgresql/data
+      - puska-db-dwh:/var/lib/postgresql/data
 volumes:
   puska-ops-db:
-  puska-dwh-db:
+  puska-db-dwh:

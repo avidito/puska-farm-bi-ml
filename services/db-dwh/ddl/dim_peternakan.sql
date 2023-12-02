@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE dim_peternakan (
     id INT8,
     id_unit_ternak INT8,

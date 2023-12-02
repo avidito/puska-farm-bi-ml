@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE dim_unit_ternak (
     id INT8,
     id_lokasi INT8,
