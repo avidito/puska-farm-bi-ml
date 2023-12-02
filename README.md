@@ -4,13 +4,11 @@
 Puska - Farm Business Intelligence and Machine Learning Streaming Services.
 
 ## Services
-|No|Name|Type|Description|
-|--:|:--|---|:---|
-|1|ops-db|Database|Opearational database (application data)|
-|2|dwh-db|Database|Data warehouse for BI and report|
-|3|kafka|Broker|Data buffer and broker services|
-|4|flink|Runner|Runner platform for ETL|
-|5|etl-batch|ETL|Batch data processing|
-|6|etl-streaming|ETL|Streaming data processing|
-|7|bi-websocket|Websocket|BI data push services|
-|8|ml-trigger|Notification|ML streaming API hitter (notification)| 
+
+**Release: 1.0.0**
+
+|No|Name|Type|Description|Version|
+|--:|:--|---|:--|:--|
+|1|db-ops|Database|Opearational database (application data)|1.0-postgres15.3|
+|2|db-dwh|Database|Data warehouse for BI and report|1.0-postgres15.3|
+|3|etl-batch|ETL|Batch data processing|1.0-beam2.52.0|

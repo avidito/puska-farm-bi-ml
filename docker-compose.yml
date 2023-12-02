@@ -2,8 +2,8 @@ version: '3'
 services:
   db-ops:
     image: avidito/puska-ops-db:1.0-postgres15.3
-    build:
-      context: ./services/db-ops
+    # build:
+    #   context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -15,8 +15,8 @@ services:
 
   db-dwh:
     image: avidito/puska-db-dwh:1.0-postgres15.3
-    build:
-      context: ./services/db-dwh
+    # build:
+    #   context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
@@ -28,8 +28,8 @@ services:
   
   etl-batch:
     image: avidito/puska-etl-batch:1.0-beam2.52.0
-    build:
-      context: ./services/etl-batch
+    # build:
+    #   context: ./services/etl-batch
     environment:
       - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-db-dwh}
       - DWH_DB_PORT=${DWH_DB_PORT:-5432}
