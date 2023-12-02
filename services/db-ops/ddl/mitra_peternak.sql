@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE mitra_peternak (
 	id BIGSERIAL,
 	nama_mitra VARCHAR(255),
@@ -31,6 +32,7 @@ CREATE TABLE mitra_peternak (
 	CONSTRAINT mitra_peternak_pkey PRIMARY KEY (id)
 );
 
+-- Inject
 COPY mitra_peternak
 FROM '/seed/mitra_peternak.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

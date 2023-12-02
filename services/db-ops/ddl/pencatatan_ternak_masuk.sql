@@ -1,7 +1,8 @@
-CREATE TABLE pencatatan_ternak_keluar (
+-- Table
+CREATE TABLE pencatatan_ternak_masuk (
 	id BIGSERIAL,
 	tgl_pencatatan DATE,
-	jenis_mitra_penerima VARCHAR(255),
+	jenis_mitra_pengirim VARCHAR(255),
 	jml_pedaging_jantan INT4,
 	jml_pedaging_betina INT4,
 	jml_pedaging_anakan_jantan INT4,
@@ -17,9 +18,10 @@ CREATE TABLE pencatatan_ternak_keluar (
 	updated_by INT8,
 	deleted_by INT8,
 	id_peternak INT8,
-	CONSTRAINT pencatatan_ternak_keluar_pkey PRIMARY KEY (id)
+	CONSTRAINT pencatatan_ternak_masuk_pkey PRIMARY KEY (id)
 );
 
-COPY pencatatan_ternak_keluar
-FROM '/seed/pencatatan_ternak_keluar.csv'
+-- Inject
+COPY pencatatan_ternak_masuk
+FROM '/seed/pencatatan_ternak_masuk.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");
