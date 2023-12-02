@@ -1,7 +1,9 @@
 version: '3'
 services:
-  ops-db:
-    image: avidito/puska-ops-db:1.0
+  db-ops:
+    image: avidito/puska-ops-db:1.0-postgres15.3
+    build:
+      context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -9,10 +11,12 @@ services:
     ports:
       - 5600:5432
     volumes:
-      - puska-ops-db:/var/lib/postgresql/data
+      - puska-db-ops:/var/lib/postgresql/data
 
-  dwh-db:
-    image: avidito/puska-dwh-db:1.0
+  db-dwh:
+    image: avidito/puska-db-dwh:1.0-postgres15.3
+    build:
+      context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
@@ -20,24 +24,7 @@ services:
     ports:
       - 5601:5432
     volumes:
-      - puska-dwh-db:/var/lib/postgresql/data
-  
-  etl-batch:
-    image: avidito/puska-etl-batch:1.0
-    environment:
-      - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-dwh-db}
-      - DWH_DB_PORT=${DWH_DB_PORT:-5432}
-      - DWH_DB_NAME=${DWH_DB_NAME:-puska}
-      - DWH_DB_USER=${DWH_DB_USER:-puska}
-      - DWH_DB_PASSWORD=${DWH_DB_PASSWORD:-puska}
-      - OPS_DB_HOSTNAME=${OPS_DB_HOSTNAME:-ops-db}
-      - OPS_DB_PORT=${OPS_DB_PORT:-5432}
-      - OPS_DB_NAME=${OPS_DB_NAME:-puska}
-      - OPS_DB_USER=${OPS_DB_USER:-puska}
-      - OPS_DB_PASSWORD=${OPS_DB_PASSWORD:-puska}
-    entrypoint: ["sleep", "infinity"]
-    volumes:
-      - ./services/etl-batch/etl:/scripts/etl
+      - puska-db-dwh:/var/lib/postgresql/data
 volumes:
-  puska-ops-db:
-  puska-dwh-db:
+  puska-db-ops:
+  puska-db-dwh:

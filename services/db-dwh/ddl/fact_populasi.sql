@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE fact_populasi (
     id_peternakan INT8,
     tanggal DATE,
@@ -8,6 +9,7 @@ CREATE TABLE fact_populasi (
     jumlah_mati INT8,
     jumlah_masuk INT8,
     jumlah_keluar INT8,
+    jumlah INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
     CONSTRAINT fact_populasi_pkey PRIMARY KEY(id_peternakan, tanggal)

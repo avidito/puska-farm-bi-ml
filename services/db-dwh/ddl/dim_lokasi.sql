@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE dim_lokasi (
     id INT8,
     provinsi VARCHAR(100),
