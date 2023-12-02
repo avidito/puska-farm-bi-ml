@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE dim_sumber_pasokan (
     id INT8,
     nama_sumber_pasokan VARCHAR(100),
