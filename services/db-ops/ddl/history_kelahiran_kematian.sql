@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE history_kelahiran_kematian (
 	id BIGSERIAL,
 	tgl_pencatatan DATE,
@@ -23,6 +24,7 @@ CREATE TABLE history_kelahiran_kematian (
 	CONSTRAINT history_kelahiran_kematian_pkey PRIMARY KEY (id)
 );
 
+-- Inject
 COPY history_kelahiran_kematian
 FROM '/seed/history_kelahiran_kematian.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

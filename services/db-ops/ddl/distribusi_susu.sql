@@ -1,4 +1,5 @@
-CREATE TABLE distribusi_ternak (
+-- Table
+CREATE TABLE distribusi_susu (
 	id BIGSERIAL,
 	tgl_distribusi DATE,
 	jumlah NUMERIC(8, 2),
@@ -13,9 +14,10 @@ CREATE TABLE distribusi_ternak (
 	id_unit_ternak INT8,
 	id_jenis_produk INT8,
 	id_mitra_bisnis INT8,
-	CONSTRAINT distribusi_ternak_pkey PRIMARY KEY (id)
+	CONSTRAINT distribusi_susu_pkey PRIMARY KEY (id)
 );
 
-COPY distribusi_ternak
-FROM '/seed/distribusi_ternak.csv'
+-- Inject
+COPY distribusi_susu
+FROM '/seed/distribusi_susu.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

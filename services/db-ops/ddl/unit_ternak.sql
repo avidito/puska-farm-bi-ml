@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE unit_ternak (
 	id BIGSERIAL,
 	nama_unit VARCHAR(255),
@@ -17,6 +18,7 @@ CREATE TABLE unit_ternak (
 	CONSTRAINT unit_ternak_pkey PRIMARY KEY (id)
 );
 
+-- Inject
 COPY unit_ternak
 FROM '/seed/unit_ternak.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE mitra_pengepul_luar (
 	id BIGSERIAL,
 	nama_pengepul VARCHAR(255),
@@ -21,6 +22,7 @@ CREATE TABLE mitra_pengepul_luar (
 	CONSTRAINT mitra_pengepul_luar_pkey PRIMARY KEY (id)
 );
 
+-- Inject
 COPY mitra_pengepul_luar
 FROM '/seed/mitra_pengepul_luar.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");
