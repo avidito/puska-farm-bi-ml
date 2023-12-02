@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE produksi_ternak (
 	id BIGSERIAL,
 	tgl_produksi DATE,
@@ -16,6 +17,7 @@ CREATE TABLE produksi_ternak (
 	CONSTRAINT produksi_ternak_sumber_pasokan_check CHECK (((sumber_pasokan)::text = ANY (ARRAY[('Peternakan Sendiri'::character varying)::text, ('Peternakan Lain'::character varying)::text, ('Pengepul'::character varying)::text])))
 );
 
+-- Inject
 COPY produksi_ternak
 FROM '/seed/produksi_ternak.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

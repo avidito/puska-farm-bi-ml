@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE fact_distribusi (
     id_unit_ternak INT8,
     id_mitra_bisnis INT8,

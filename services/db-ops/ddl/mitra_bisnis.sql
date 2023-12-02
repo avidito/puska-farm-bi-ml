@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE mitra_bisnis (
 	id BIGSERIAL,
 	nama_mitra VARCHAR(255),
@@ -16,6 +17,7 @@ CREATE TABLE mitra_bisnis (
 	CONSTRAINT mitra_bisnis_pkey PRIMARY KEY (id)
 );
 
+-- Inject
 COPY mitra_bisnis
 FROM '/seed/mitra_bisnis.csv'
 WITH (FORMAT 'csv', DELIMITER ',', HEADER TRUE, NULL 'NULL', QUOTE "'");

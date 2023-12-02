@@ -9,7 +9,7 @@ Base  = declarative_base()
 
 # Utils
 def exclude_columns(columns: list):
-    def wrapper(data: dict):
+    def wrapper(data):
         return {
             k: v for k,v in data.items()
             if k not in columns
@@ -17,7 +17,7 @@ def exclude_columns(columns: list):
     return wrapper
 
 def enrich_system_data(dt: datetime):
-    def wrapper(data: dict):
+    def wrapper(data):
         enr_data = {
             **data,
             "created_dt": dt,

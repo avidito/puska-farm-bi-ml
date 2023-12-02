@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE fact_populasi (
     id_peternakan INT8,
     tanggal DATE,

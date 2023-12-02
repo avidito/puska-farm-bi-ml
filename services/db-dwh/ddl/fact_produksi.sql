@@ -1,3 +1,4 @@
+-- Table
 CREATE TABLE fact_produksi (
     id_unit_ternak INT8,
     id_sumber_pasokan INT8,
