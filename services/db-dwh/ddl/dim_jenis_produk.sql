@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_jenis_produk (
-    id INT8,
+    id SERIAL,
     nama_produk VARCHAR(100),
     kategori_produk VARCHAR(100),
     satuan VARCHAR(100),
