@@ -1,3 +1,4 @@
 # Development
 .env
+*-venv/
 __pycache__/
