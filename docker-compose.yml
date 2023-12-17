@@ -1,9 +1,17 @@
 version: '3'
+volumes:
+  puska-db-ops:
+  puska-db-dwh:
+  puska-zookeeper-data:
+  puska-zookeeper-log:
+  puska-zookeeper-secrets:
+  puska-kafka-data:
+  puska-kafka-secrets:
 services:
   db-ops:
     image: avidito/puska-ops-db:1.0-postgres15.3
-    build:
-      context: ./services/db-ops
+    # build:
+    #   context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -12,5 +20,64 @@ services:
       - 5600:5432
     volumes:
       - puska-db-ops:/var/lib/postgresql/data
-volumes:
-  puska-db-ops:
+
+  db-dwh:
+    image: avidito/puska-db-dwh:1.0-postgres15.3
+    # build:
+    #   context: ./services/db-dwh
+    environment:
+      - POSTGRES_USER=${DWH_DB_USER:-puska}
+      - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
+      - POSTGRES_DB=${DWH_DB_NAME:-puska}
+    ports:
+      - 5601:5432
+    volumes:
+      - puska-db-dwh:/var/lib/postgresql/data
+  
+  etl-batch:
+    image: avidito/puska-etl-batch:1.0-beam2.52.0
+    # build:
+    #   context: ./services/etl-batch
+    environment:
+      - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-db-dwh}
+      - DWH_DB_PORT=${DWH_DB_PORT:-5432}
+      - DWH_DB_NAME=${DWH_DB_NAME:-puska}
+      - DWH_DB_USER=${DWH_DB_USER:-puska}
+      - DWH_DB_PASSWORD=${DWH_DB_PASSWORD:-puska}
+      - OPS_DB_HOSTNAME=${OPS_DB_HOSTNAME:-db-ops}
+      - OPS_DB_PORT=${OPS_DB_PORT:-5432}
+      - OPS_DB_NAME=${OPS_DB_NAME:-puska}
+      - OPS_DB_USER=${OPS_DB_USER:-puska}
+      - OPS_DB_PASSWORD=${OPS_DB_PASSWORD:-puska}
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - ./services/etl-batch/etl:/scripts/etl
+    
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2200:2181
+    volumes: 
+      - puska-zookeeper-data:/var/lib/zookeeper/data
+      - puska-zookeeper-log:/var/lib/zookeeper/log
+      - puska-zookeeper-data:/etc/zookeeper/sercrets
+  
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - 29200:29200
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29200
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes: 
+      - puska-kafka-data:/var/lib/kafka/data
+      - puska-kafka-secrets:/etc/kafka/secrets
