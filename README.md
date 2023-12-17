@@ -5,7 +5,7 @@ Puska - Farm Business Intelligence and Machine Learning Streaming Services.
 
 ## Services
 
-**Release: 1.0.0**
+**Release: 1.0.1**
 
 |No|Name|Type|Description|Version|
 |--:|:--|---|:--|:--|
