@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_pengepul (
-    id SERIAL,
+    id INT8,
     id_unit_ternak INT8,
     nama_pengepul VARCHAR(100),
     jenis_pengepul VARCHAR(100),
