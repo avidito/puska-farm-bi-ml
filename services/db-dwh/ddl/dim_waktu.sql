@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_waktu (
-    id SERIAL,
+    id INT8,
     tahun INT8,
     bulan INT8,
     minggu INT8,

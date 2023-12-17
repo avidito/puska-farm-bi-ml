@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_peternakan (
-    id SERIAL,
+    id INT8,
     id_unit_ternak INT8,
     nama_peternakan VARCHAR(100),
     nama_pemilik VARCHAR(100),
