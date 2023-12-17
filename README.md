@@ -12,3 +12,4 @@ Puska - Farm Business Intelligence and Machine Learning Streaming Services.
 |1|db-ops|Database|Opearational database (application data)|1.0-postgres15.3|
 |2|db-dwh|Database|Data warehouse for BI and report|1.0-postgres15.3|
 |3|etl-batch|ETL|Batch data processing|1.0-beam2.52.0|
+|4|kafka|Broker|Message broker for streaming data|7.5.0|
