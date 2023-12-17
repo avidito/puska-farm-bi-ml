@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_unit_ternak (
-    id INT8,
+    id SERIAL,
     id_lokasi INT8,
     nama_unit VARCHAR(100),
     alamat TEXT,

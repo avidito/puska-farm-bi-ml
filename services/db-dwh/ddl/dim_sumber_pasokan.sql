@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_sumber_pasokan (
-    id INT8,
+    id SERIAL,
     nama_sumber_pasokan VARCHAR(100),
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
