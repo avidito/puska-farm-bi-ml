@@ -8,18 +8,18 @@ volumes:
   puska-kafka-data:
   puska-kafka-secrets:
 services:
-  # db-ops:
-  #   # image: avidito/puska-ops-db:1.0-postgres15.3
-  #   build:
-  #     context: ./services/db-ops
-  #   environment:
-  #     - POSTGRES_USER=${OPS_DB_USER:-puska}
-  #     - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
-  #     - POSTGRES_DB=${OPS_DB_NAME:-puska}
-  #   ports:
-  #     - 5600:5432
-  #   volumes:
-  #     - puska-db-ops:/var/lib/postgresql/data
+  db-ops:
+    image: avidito/postgres-db:15.3-puska-ops-1.0
+    # build:
+    #   context: ./services/db-ops
+    environment:
+      - POSTGRES_USER=${OPS_DB_USER:-puska}
+      - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
+      - POSTGRES_DB=${OPS_DB_NAME:-puska}
+    ports:
+      - 5600:5432
+    volumes:
+      - puska-db-ops:/var/lib/postgresql/data
 
   db-dwh:
     image: avidito/postgres-db:15.3-puska-dwh-1.0
