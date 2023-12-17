@@ -1,6 +1,6 @@
 -- Table
 CREATE TABLE dim_lokasi (
-    id SERIAL,
+    id INT8,
     provinsi VARCHAR(100),
     kabupaten_kota VARCHAR(100),
     kecamatan VARCHAR(100),
