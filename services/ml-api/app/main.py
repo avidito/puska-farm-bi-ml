@@ -4,12 +4,13 @@ import pandas as pd
 
 from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.responses import JSONResponse
 from sqlalchemy import and_
-from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
+from typing import Optional
 from typing_extensions import Annotated
-from starlette import status
 
 import app.models as models
 
@@ -38,22 +39,66 @@ model_dict = load_model()
 scaler_dict = load_scaler()
 
 class PredictionRequest(BaseModel):
-    date: date
-    time_type: str
-    province: str
-    regency: str
-    unit: str
+    date: Optional[date] = None
+    time_type: str = None
+    province: Optional[str] = None 
+    regency: Optional[str] = None
+    unit: Optional[str] = None
+    
+class PredictionResponse(BaseModel):
+    message: str
 
 app = FastAPI()
 
-@app.post("/predict", status_code=status.HTTP_200_OK)
-async def create_prediction(predict_request: PredictionRequest, db: Session = Depends(get_db)):
+@app.post(
+    path="/predict", 
+    name="run_milk_prediction",
+    responses={
+        201: {
+            'model': PredictionResponse,
+            'description': "Prediction success"
+        },
+        400: {
+            'model': PredictionResponse,
+            'description': "There is bad request from client"
+        },
+        404: {
+            'model': PredictionResponse,
+            'description': "Model or Scaler not found"
+        }
+    }
+)
+async def create_prediction(
+    predict_request: PredictionRequest, 
+    db: Session = Depends(get_db)
+):
+    
+    # Handle date field is required
+    if (predict_request.date is None):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                'message': 'date field is required.'
+            }
+        )
+        
+    # Handle time_type is required
+    if (predict_request.time_type is None):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                'message': 'time_type field is required.'
+            }
+        )
     
     today_date = predict_request.date
     start_date = today_date - timedelta(int(os.getenv('LOOK_BACK')))
     start_date = start_date.strftime("%Y-%m-%d")
     end_date = today_date - timedelta(1)
     end_date = end_date.strftime("%Y-%m-%d")
+    
+    print(start_date, end_date)
+    return
     
     if predict_request.time_type == '':
         raise HTTPException(status_code=404, detail='Time type should be not empty')
