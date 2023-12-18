@@ -10,8 +10,8 @@ volumes:
 services:
   db-ops:
     image: avidito/postgres-db:15.3-puska-ops-1.0
-    # build:
-    #   context: ./services/db-ops
+    build:
+      context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -22,9 +22,9 @@ services:
       - puska-db-ops:/var/lib/postgresql/data
 
   db-dwh:
-    image: avidito/postgres-db:15.3-puska-dwh-1.1
-    # build:
-    #   context: ./services/db-dwh
+    image: avidito/postgres-db:15.3-puska-dwh-1.2
+    build:
+      context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
@@ -35,7 +35,7 @@ services:
       - puska-db-dwh:/var/lib/postgresql/data
   
   etl-batch:
-    # image: avidito/puska-etl-batch:1.0-beam2.52.0
+    image: avidito/beam-python:2.52.0-puska-batch-1.1
     build:
       context: ./services/etl-batch
     environment:
