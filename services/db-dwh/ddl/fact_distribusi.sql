@@ -1,7 +1,7 @@
 -- Table
 CREATE TABLE fact_distribusi (
     id_waktu INT8,
-    id_wilayah INT8,
+    id_lokasi INT8,
     id_unit_ternak INT8,
     id_mitra_bisnis INT8,
     id_jenis_produk INT8,
@@ -12,5 +12,5 @@ CREATE TABLE fact_distribusi (
     jumlah_penjualan INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
-    CONSTRAINT fact_distribusi_pkey PRIMARY KEY(id_waktu, id_wilayah, id_unit_ternak, id_mitra_bisnis, id_jenis_produk)
+    CONSTRAINT fact_distribusi_pkey PRIMARY KEY(id_waktu, id_lokasi, id_unit_ternak, id_mitra_bisnis, id_jenis_produk)
 );

@@ -19,6 +19,22 @@ def main():
 
     # ETL
     with beam.Pipeline() as pipeline:
+        # Ref: Waktu
+        side_waktu_pipeline = (
+            pipeline
+            | "Read DB - dim_waktu" >> relational_db.ReadFromDB(
+                source_config = connection.get_connection("dwh-db"),
+                table_name = "dim_waktu",
+                query = database.get_query(QUERY_DIR, "dim_waktu")
+            )
+            | "Create Date ID Dict" >> beam.Map(
+                lambda x: (
+                    datetime.strptime(f"{x['tahun']}-{x['bulan']}-{x['tanggal']}", "%Y-%m-%d").date(),
+                    x['id']
+                )
+            )
+        )
+
         (
             pipeline
             | "Read DB - produksi" >> relational_db.ReadFromDB(
@@ -26,6 +42,7 @@ def main():
                 table_name = "produksi_susu",
                 query = database.get_query(QUERY_DIR, "produksi")
             )
+            | "Mapping Date ID" >> beam.Map(__mapping_date_id, beam.pvalue.AsDict(side_waktu_pipeline))
             | "Enrich System Data" >> beam.Map(database.enrich_system_data(datetime.now(TZINFO)))
             | "Load Data - fact_produksi" >> relational_db.Write(
                 source_config = connection.get_connection("dwh-db"),
@@ -37,6 +54,13 @@ def main():
                 )
             )
         )
+
+
+def __mapping_date_id(row, date_ids):
+    prc_row = row.copy()
+    row_tanggal = prc_row.pop("tanggal")
+    prc_row["id_waktu"] = date_ids[row_tanggal]
+    return prc_row
 
 
 if __name__ == "__main__":

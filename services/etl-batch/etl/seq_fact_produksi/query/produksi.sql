@@ -32,6 +32,7 @@ cte_sumber_pasokan AS (
 )
 SELECT
   p.id_unit_ternak,
+  ut.kota_id AS id_lokasi,
   sp.id AS id_sumber_pasokan,
   p.id_jenis_produk,
   p.tanggal,
@@ -39,4 +40,6 @@ SELECT
 FROM cte_union_produksi AS p
 JOIN cte_sumber_pasokan AS sp
   ON p.sumber_pasokan = sp.nama_sumber_pasokan
-GROUP BY 1, 2, 3, 4;
+JOIN unit_ternak AS ut
+  ON p.id_unit_ternak = ut.id
+GROUP BY 1, 2, 3, 4, 5;

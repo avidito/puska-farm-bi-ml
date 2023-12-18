@@ -76,25 +76,32 @@ cte_pop_betina_perah AS (
 ),
 cte_populasi AS (
   SELECT
-    tanggal,
-    id_peternakan,
-    jenis_kelamin,
-    tipe_ternak,
-    jumlah_lahir,
-    jumlah_mati,
-    jumlah_masuk,
-    jumlah_keluar,
-    ((jumlah_lahir + jumlah_masuk) - (jumlah_mati + jumlah_keluar)) AS jumlah
+    ud.tanggal,
+    ut.kota_id AS id_lokasi,
+    ut.id AS id_unit_ternak,
+    ud.jenis_kelamin,
+    ud.tipe_ternak,
+    SUM(ud.jumlah_lahir) AS jumlah_lahir,
+    SUM(ud.jumlah_mati) AS jumlah_mati,
+    SUM(ud.jumlah_masuk) AS jumlah_masuk,
+    SUM(ud.jumlah_keluar) AS jumlah_keluar,
+    SUM((ud.jumlah_lahir + ud.jumlah_masuk) - (ud.jumlah_mati + ud.jumlah_keluar)) AS jumlah
   FROM (
     SELECT tanggal, id_peternakan, jenis_kelamin, tipe_ternak, jumlah_lahir, jumlah_mati, jumlah_masuk, jumlah_keluar FROM cte_pop_jantan_pedaging UNION ALL
     SELECT tanggal, id_peternakan, jenis_kelamin, tipe_ternak, jumlah_lahir, jumlah_mati, jumlah_masuk, jumlah_keluar FROM cte_pop_betina_pedaging UNION ALL
     SELECT tanggal, id_peternakan, jenis_kelamin, tipe_ternak, jumlah_lahir, jumlah_mati, jumlah_masuk, jumlah_keluar FROM cte_pop_jantan_perah UNION ALL
     SELECT tanggal, id_peternakan, jenis_kelamin, tipe_ternak, jumlah_lahir, jumlah_mati, jumlah_masuk, jumlah_keluar FROM cte_pop_betina_perah
   ) AS ud
+  JOIN mitra_peternak AS mp
+    ON ud.id_peternakan = mp.id
+  JOIN unit_ternak AS ut
+    ON mp.id_unit_ternak = ut.id
+  GROUP BY 1, 2, 3, 4, 5
 )
 SELECT
-  id_peternakan,
   tanggal,
+  id_lokasi,
+  id_unit_ternak,
   jenis_kelamin,
   tipe_ternak,
   jumlah_lahir,
