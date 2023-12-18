@@ -1,9 +1,17 @@
 version: '3'
+volumes:
+  puska-db-ops:
+  puska-db-dwh:
+  puska-zookeeper-data:
+  puska-zookeeper-log:
+  puska-zookeeper-secrets:
+  puska-kafka-data:
+  puska-kafka-secrets:
 services:
   db-ops:
-    image: avidito/puska-ops-db:1.0-postgres15.3
-    # build:
-    #   context: ./services/db-ops
+    image: avidito/postgres-db:15.3-puska-ops-1.0
+    build:
+      context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -14,9 +22,9 @@ services:
       - puska-db-ops:/var/lib/postgresql/data
 
   db-dwh:
-    image: avidito/puska-db-dwh:1.0-postgres15.3
-    # build:
-    #   context: ./services/db-dwh
+    image: avidito/postgres-db:15.3-puska-dwh-1.2
+    build:
+      context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
@@ -27,9 +35,9 @@ services:
       - puska-db-dwh:/var/lib/postgresql/data
   
   etl-batch:
-    image: avidito/puska-etl-batch:1.0-beam2.52.0
-    # build:
-    #   context: ./services/etl-batch
+    image: avidito/beam-python:2.52.0-puska-batch-1.1
+    build:
+      context: ./services/etl-batch
     environment:
       - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-db-dwh}
       - DWH_DB_PORT=${DWH_DB_PORT:-5432}
@@ -55,26 +63,21 @@ services:
     volumes: 
       - puska-zookeeper-data:/var/lib/zookeeper/data
       - puska-zookeeper-log:/var/lib/zookeeper/log
+      - puska-zookeeper-data:/etc/zookeeper/sercrets
   
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     depends_on:
       - zookeeper
     ports:
-      - 29200:29092
+      - 29200:29200
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29200
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes: 
       - puska-kafka-data:/var/lib/kafka/data
-
-volumes:
-  puska-db-ops:
-  puska-db-dwh:
-  puska-zookeeper-data:
-  puska-zookeeper-log:
-  puska-kafka-data:
+      - puska-kafka-secrets:/etc/kafka/secrets

@@ -5,4 +5,4 @@ WORKDIR /scripts
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY etl/ .
+COPY etl/ /scripts/etl/
