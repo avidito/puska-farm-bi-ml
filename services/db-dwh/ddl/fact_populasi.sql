@@ -1,6 +1,7 @@
 -- Table
 CREATE TABLE fact_populasi (
     id_waktu INT8,
+    id_lokasi INT8,
     id_unit_ternak INT8,
     jenis_kelamin VARCHAR(10),
     tipe_ternak VARCHAR(15),
@@ -12,5 +13,5 @@ CREATE TABLE fact_populasi (
     jumlah INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
-    CONSTRAINT fact_populasi_pkey PRIMARY KEY(id_waktuid, _unit_ternak)
+    CONSTRAINT fact_populasi_pkey PRIMARY KEY(id_waktu, id_unit_ternak)
 );
