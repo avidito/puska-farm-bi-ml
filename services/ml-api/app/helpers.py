@@ -60,47 +60,4 @@ def load_scaler():
             
     return scaler_dict
     
-    for time_type in os.listdir(scaler_path):
-        
-        scaler_dict[time_type] = {}
-        
-        for province in os.listdir(os.path.join(scaler_path, time_type)):
-            scaler_dict[time_type][province] = {}
-            
-            for regency in os.listdir(os.path.join(scaler_path, time_type, province)):
-                if regency == 'scaler.joblib':
-                    try:
-                        scaler_dict[time_type][province]['scaler'] = joblib.load(
-                            os.path.join(scaler_path, time_type, province, 'scaler.joblib')
-                        )
-                    except:
-                        scaler_dict[time_type][province]['scaler'] = None
-                    continue
-                
-                scaler_dict[time_type][province][regency] = {}
-                
-                for unit in os.listdir(os.path.join(scaler_path, time_type, province, regency)):
-                    if unit == 'scaler.joblib':
-                        try:
-                            scaler_dict[time_type][province][regency]['scaler'] = joblib.load(
-                                os.path.join(scaler_path, time_type, province, regency, 'scaler.joblib')
-                            )
-                        except:
-                            scaler_dict[time_type][province][regency]['scaler'] = None
-                        continue
-                    
-                    scaler_dict[time_type][province][regency][unit] = {}
-                    try:
-                        scaler_dict[time_type][province][regency][unit]['scaler'] = joblib.load(
-                            os.path.join(scaler_path, time_type, province, regency, unit, 'scaler.joblib')
-                        )
-                    except:
-                        scaler_dict[time_type][province][regency][unit]['scaler'] = None
-                
-                if not 'scaler' in scaler_dict[time_type][province][regency]:
-                    scaler_dict[time_type][province][regency]['scaler'] = None
-            
-            if not 'scaler' in scaler_dict[time_type][province]:
-                scaler_dict[time_type][province]['scaler'] = None
-
-    return scaler_dict
+  
