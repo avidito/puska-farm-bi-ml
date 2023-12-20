@@ -15,8 +15,8 @@ from typing_extensions import Annotated
 import app.models as models
 
 from app.database import engine, SessionLocal
-from app.helpers import load_model, load_scaler
-from app.models import ProduksiSusu, UnitTernak, Wilayah, PredictionSusuDailyProvince, PredictionSusuDailyRegency, PredictionSusuDailyUnit
+from app.helpers import *
+from app.models import *
 
 ENV_PATH = '.env'
 
@@ -39,7 +39,7 @@ model_dict = load_model()
 scaler_dict = load_scaler()
 
 class PredictionRequest(BaseModel):
-    date: Optional[date] = None
+    date: Optional[date]
     time_type: str = None
     province: Optional[str] = None 
     regency: Optional[str] = None
@@ -73,7 +73,7 @@ async def create_prediction(
     db: Session = Depends(get_db)
 ):
     
-    # Handle date field is required
+    # validate date field is required
     if (predict_request.date is None):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -82,8 +82,8 @@ async def create_prediction(
             }
         )
         
-    # Handle time_type is required
-    if (predict_request.time_type is None):
+    # validate time type is required
+    if (    ):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
@@ -91,15 +91,156 @@ async def create_prediction(
             }
         )
     
-    today_date = predict_request.date
-    start_date = today_date - timedelta(int(os.getenv('LOOK_BACK')))
-    start_date = start_date.strftime("%Y-%m-%d")
-    end_date = today_date - timedelta(1)
-    end_date = end_date.strftime("%Y-%m-%d")
+    # handle there is no filter input
+    if ((predict_request.province is None) and 
+        (predict_request.regency is None) and
+        (predict_request.unit is None)) or \
+       ((predict_request.province == '') and 
+        (predict_request.regency == '') and
+        (predict_request.unit == '')):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                'message': "please fill province, regency, or unit field."
+            }
+        )
+        
+    # get id lokasi 
+    if ((predict_request.regency is None) or (predict_request.regency == '')):
+        id_lokasi = (
+            db.query(DimLokasi.id)
+            .filter(and_(DimLokasi.provinsi == predict_request.province,
+                         DimLokasi.kabupaten_kota  == None))
+            .first()
+        )
+        
+        # handle id lokasi not found
+        if (id_lokasi is None):
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    'message': "id_lokasi not found"
+                }
+            )
+        else:
+            id_lokasi = id_lokasi[0]
+            load_key = f"{predict_request.province.lower()}"
     
-    print(start_date, end_date)
+    else:
+        id_lokasi = (
+            db.query(DimLokasi.id)
+            .filter(and_(DimLokasi.provinsi == predict_request.province,
+                         DimLokasi.kabupaten_kota  == predict_request.regency))
+            .first()
+        )
+        
+        # handle id lokasi not found
+        if (id_lokasi is None):
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    'message': "id_lokasi not found"
+                }
+            )
+        else:
+            id_lokasi = id_lokasi[0]
+            load_key = f"{predict_request.province.lower()}-{predict_request.regency.lower()}"
+    
+    # get id unit ternak
+    if not (predict_request.unit is None):
+        id_unit_ternak = (
+            db.query(DimUnitTernak.id)
+            .filter_by(nama_unit=predict_request.unit.lower())
+            .first()
+        )
+        
+        if (id_unit_ternak is None):
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    'message': "id_unit_ternak not found"
+                }
+            )
+        else:
+            id_unit_ternak = id_unit_ternak[0]
+            load_key = f"{predict_request.province.lower()}-{predict_request.regency.lower()}-{predict_request.unit.lower()}"
+            
+    else:
+        id_unit_ternak = None
+        
+    
+    if (predict_request.time_type.lower() == 'daily'):
+        
+        # get id waktu from dwh
+        today_date = predict_request.date
+        start_date = today_date - timedelta(int(os.getenv('LOOK_BACK')))
+        end_date = today_date - timedelta(1)
+        
+        date_list = create_date_range(start_date, end_date)
+        
+        id_tanggal_list = []
+        for dt in date_list:
+            id_tanggal = (
+                db.query(DimWaktu.id)
+                .filter_by(tahun=dt[0],
+                        bulan=dt[1],
+                        tanggal=dt[2])
+                .first()
+            )
+            
+            # handle date not found in dwh
+            if (id_tanggal is None):
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={
+                        'message': f"date ({dt[0]}-{dt[1]}-{dt[2]}) not found in database"
+                    }
+                )
+            
+            id_tanggal_list.append(id_tanggal[0])
+        
+        # get data input for prediction
+        input_data_list = []
+        for id_tanggal in id_tanggal_list:
+            
+            data = (
+                db.query(FactProduksi.jumlah_produksi)
+                .filter(and_(FactProduksi.id_waktu == id_tanggal,
+                             FactProduksi.id_lokasi == id_lokasi,
+                             FactProduksi.id_unit_ternak == id_unit_ternak))
+                .first()
+            )
+            
+            if (data is None):
+                data_pred = (
+                    db.query(PredSusu.prediction)
+                    .filter(and_(PredSusu.id_waktu == id_tanggal,
+                                 PredSusu.id_lokasi == id_lokasi,
+                                 PredSusu.id_unit_ternak == id_unit_ternak))
+                    .first()
+                    )
+                
+                if (data_pred is None):
+                    return JSONResponse(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        content={
+                            'message': "there is missing data for input prediction."
+                        }
+                    )
+                else:
+                    input_data_list.append([id_tanggal, float(data_pred[0])])
+            else:
+                input_data_list.append([id_tanggal, data[0]])
+        
+        # format input data 
+        input_data_df = pd.DataFrame(input_data_list, columns=['id_tanggal', 'data'])
+        print(input_data_df)
+        return
+    else:
+        # This is for weekly prediction
+        pass
+    
     return
-    
     if predict_request.time_type == '':
         raise HTTPException(status_code=404, detail='Time type should be not empty')
     

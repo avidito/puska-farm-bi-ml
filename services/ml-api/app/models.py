@@ -1,70 +1,94 @@
-from sqlalchemy import Column, BigInteger, Numeric, String, Date, DateTime, Text, Float
+from datetime import datetime, timezone
+from sqlalchemy import (BigInteger,
+                        Column, 
+                        DateTime,
+                        ForeignKey,
+                        Integer,
+                        Numeric,
+                        Sequence,
+                        String)
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
-class ProduksiSusu(Base):
-    __tablename__ = 'produksi_susu'
-
-    id = Column(BigInteger, primary_key=True)
-    tgl_produksi = Column(Date)
-    jumlah = Column(Numeric)
-    satuan = Column(String)
-    sumber_pasokan = Column(String)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
-    created_by = Column(BigInteger)
-    updated_by = Column(BigInteger)
-    deleted_by = Column(BigInteger)
-    id_unit_ternak = Column(BigInteger)
-    id_jenis_produk = Column(BigInteger)
+class DimWaktu(Base):
+    __tablename__ = 'dim_waktu'
     
-class UnitTernak(Base):
-    __tablename__ = 'unit_ternak'
-
     id = Column(BigInteger, primary_key=True)
-    nama_unit = Column(String)
-    alamat = Column(Text)
-    provinsi_id = Column(BigInteger)
-    kota_id = Column(BigInteger)
-    kecamatan_id = Column(BigInteger)
-    kelurahan_id = Column(BigInteger)
-    latitude = Column(Numeric)
-    longitude = Column(Numeric)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
-    created_by = Column(BigInteger)
-    updated_by = Column(BigInteger)
-    deleted_by = Column(BigInteger)
-
-class Wilayah(Base):
-    __tablename__ = 'wilayah'
-
-    id = Column(BigInteger, primary_key=True)
-    kode = Column(String)
-    nama = Column(String)
+    tahun = Column(BigInteger)
+    bulan = Column(BigInteger)
+    minggu = Column(BigInteger)
+    tanggal = Column(BigInteger)
     
-class PredictionSusuDailyProvince(Base):
-    __tablename__ = 'prediction_susu_daily_province'
-
-    id = Column(BigInteger, primary_key=True)
-    date = Column(Date)
-    province = Column(String)
-    prediction = Column(Float)
+    created_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc))
+    modified_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc),
+                        onupdate=datetime.now(timezone.utc))
     
-class PredictionSusuDailyRegency(Base):
-    __tablename__ = 'prediction_susu_daily_regency'
-
-    id = Column(BigInteger, primary_key=True)
-    date = Column(Date)
-    regency = Column(String)
-    prediction = Column(Float)
     
-class PredictionSusuDailyUnit(Base):
-    __tablename__ = 'prediction_susu_daily_unit'
-
+class DimLokasi(Base):
+    __tablename__ = 'dim_lokasi'
+    
     id = Column(BigInteger, primary_key=True)
-    date = Column(Date)
-    unit = Column(String)
-    prediction = Column(Float)
+    provinsi = Column(String(100))
+    kabupaten_kota = Column(String(100))
+    
+    created_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc))
+    modified_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc),
+                        onupdate=datetime.now(timezone.utc))
+    
+    
+class DimUnitTernak(Base):
+    __tablename__ = 'dim_unit_ternak'
+    
+    id = Column(BigInteger, primary_key=True)
+    id_lokasi = Column(BigInteger, ForeignKey('dim_lokasi.id'))
+    lokasi = relationship(('DimLokasi'))
+    nama_unit = Column(String(100))
+    longitude = Column(Numeric(precision=12, scale=10))
+    latitude = Column(Numeric(precision=12, scale=10))
+    
+    created_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc))
+    modified_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc),
+                        onupdate=datetime.now(timezone.utc))
+    
+
+class FactProduksi(Base):
+    __tablename__ = 'fact_produksi'
+    
+    id_waktu = Column(BigInteger, primary_key=True)
+    id_lokasi = Column(BigInteger, primary_key=True)
+    id_unit_ternak = Column(BigInteger, primary_key=True)
+    id_jenis_produk = Column(BigInteger, primary_key=True)
+    id_sumber_pasokan = Column(BigInteger, primary_key=True )
+    jumlah_produksi = Column(BigInteger)
+    
+    created_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc))
+    modified_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc),
+                        onupdate=datetime.now(timezone.utc))
+
+
+class PredSusu(Base):
+    __tablename__ = 'pred_susu'
+    
+    id = Column(Integer, Sequence('your_table_name_id_seq'), primary_key=True)
+    id_waktu = Column(BigInteger, ForeignKey('dim_waktu.id'))
+    waktu = relationship('DimWaktu')
+    id_lokasi = Column(BigInteger, ForeignKey('dim_lokasi.id'))
+    lokasi = relationship('DimLokasi')
+    id_unit_ternak = Column(BigInteger, ForeignKey('dim_unit_ternak.id'))
+    unit_ternak = relationship('DimUnitTernak')
+    prediction = Column(Numeric(precision=10, scale=2))
+    
+    created_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc))
+    modified_dt = Column(DateTime(timezone=False),
+                        default=datetime.now(timezone.utc),
+                        onupdate=datetime.now(timezone.utc))
