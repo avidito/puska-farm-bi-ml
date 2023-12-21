@@ -260,117 +260,95 @@ async def create_prediction(
                 }
             )
         
-        print(input_data_df)
         input_data_df['dt'] = scaler.transform(input_data_df['data'].values.reshape(-1, 1))
         input_data_model = input_data_df['data'].values.tolist()
-        print(input_data_model)
+        
         input_data_model = np.array(input_data_model).reshape(1, int(os.getenv('LOOK_BACK')))
-        print(input_data_model)
-        input_data_model = np.reshape(input_data_model, (input_data_model.shape[0], 1, input_data_model[1]))
-        print(input_data_model)
-        return
+        input_data_model = np.reshape(input_data_model, (input_data_model.shape[0], 1, input_data_model.shape[1]))
+        
+        pred_data = model.predict(input_data_model)
+        pred_data = scaler.inverse_transform(pred_data)[0][0].item()
+        pred_data = round(pred_data, 2)
+        
+        # Check prediction result in database
+        id_waktu = (
+            db.query(DimWaktu.id)
+            .filter(and_(DimWaktu.tahun == predict_request.date.year,
+                         DimWaktu.bulan == predict_request.date.month,
+                         DimWaktu.tanggal == predict_request.date.day))
+            .first()
+        )
+        
+        if (id_waktu is None):
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    'message': "id_waktu not found in dim_waktu table."
+                }
+            )
+        else:
+            id_waktu = id_waktu[0]
+            
+        
+        pred_in_database = (
+            db.query(PredSusu)
+            .filter(and_(PredSusu.id_waktu == id_waktu,
+                         PredSusu.id_lokasi == id_lokasi,
+                         PredSusu.id_unit_ternak == id_unit_ternak))
+            .first()
+        )
+        
+        if (pred_in_database is None):
+            new_prediction = PredSusu(
+                id_waktu=id_waktu,
+                id_lokasi=id_lokasi,
+                id_unit_ternak=id_unit_ternak,
+                prediction=pred_data
+            )
+            
+            db.add(new_prediction)
+            db.commit()
+            
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    'message': "add new prediction result."
+                }
+            )
+            
+        else:
+            pred_in_database = float(pred_in_database.prediction)
+            
+            if (round(pred_data, 2) != round(pred_in_database, 2)):
+                update_data = (
+                    db.query(PredSusu)
+                    .filter(and_(PredSusu.id_waktu == id_waktu,
+                                 PredSusu.id_lokasi == id_lokasi,
+                                 PredSusu.id_unit_ternak == id_unit_ternak))
+                    .first()
+                )
+                
+                update_data.prediction = pred_data
+                db.commit()
+                
+                return JSONResponse(
+                    status_code=status.HTTP_200_OK,
+                    content={
+                        'message': "update prediction in database."
+                    }
+                )
+                
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    'message': "OK"
+                }
+            )
+            
     else:
         # This is for weekly prediction
         pass
     
         return
 
-
-        
-        input_data = agg_data['jumlah'].values.tolist()
-        input_data = np.array(input_data).reshape(1, int(os.getenv('LOOK_BACK')))
-        input_data = np.reshape(input_data, (input_data.shape[0], 1, input_data.shape[1]))
-        
-        new_pred = model.predict(input_data)
-        new_pred = scaler.inverse_transform(new_pred)[0][0].item()
-        new_pred = round(new_pred, 2)
-        
-        if predict_type == 'province':
-            old_pred = (
-                db.query(PredictionSusuDailyProvince.prediction)
-                .filter(and_(PredictionSusuDailyProvince.province == predict_request.province),
-                             PredictionSusuDailyProvince.date == predict_request.date)
-                .all()
-            )
-            
-            if len(old_pred) > 0:
-                if new_pred != old_pred[0][0]:
-                    update_data = (
-                        db.query(PredictionSusuDailyProvince)
-                        .filter(PredictionSusuDailyProvince.province == predict_request.province,
-                                PredictionSusuDailyProvince.date == predict_request.date)
-                        .first()
-                    )
-                    
-                    update_data.prediction = new_pred
-            else:
-                new_prediction = PredictionSusuDailyProvince(
-                    date=predict_request.date,
-                    province=predict_request.province,
-                    prediction=new_pred
-                )
-                
-                db.add(new_prediction)
-            
-            db.commit()
-            
-        elif predict_type == 'regency':
-            old_pred = (
-                db.query(PredictionSusuDailyRegency.prediction)
-                .filter(and_(PredictionSusuDailyRegency.regency == predict_request.regency),
-                             PredictionSusuDailyRegency.date == predict_request.date)
-                .all()
-            )
-            
-            if len(old_pred) > 0:
-                if new_pred != old_pred[0][0]:
-                    update_data = (
-                        db.query(PredictionSusuDailyRegency)
-                        .filter(PredictionSusuDailyRegency.regency == predict_request.regency,
-                                PredictionSusuDailyRegency.date == predict_request.date)
-                        .first()
-                    )
-                    
-                    update_data.prediction = new_pred
-            else:
-                new_prediction = PredictionSusuDailyRegency(
-                    date=predict_request.date,
-                    regency=predict_request.regency,
-                    prediction=new_pred
-                )
-                
-                db.add(new_prediction)
-            
-            db.commit()
-            
-        elif predict_type == 'unit':
-            old_pred = (
-                db.query(PredictionSusuDailyUnit.prediction)
-                .filter(and_(PredictionSusuDailyUnit.unit == predict_request.unit),
-                             PredictionSusuDailyUnit.date == predict_request.date)
-                .all()
-            )
-        
-            if len(old_pred) > 0:
-                if new_pred != old_pred[0][0]:
-                    update_data = (
-                        db.query(PredictionSusuDailyUnit)
-                        .filter(PredictionSusuDailyUnit.unit == predict_request.unit,
-                                PredictionSusuDailyUnit.date == predict_request.date)
-                        .first()
-                    )
-                    
-                    update_data.prediction = new_pred
-            else:
-                new_prediction = PredictionSusuDailyUnit(
-                    date=predict_request.date,
-                    unit=predict_request.unit,
-                    prediction=new_pred
-                )
-                
-                db.add(new_prediction)
-            
-            db.commit()
-        
-        return {'OK'}
-        
+       

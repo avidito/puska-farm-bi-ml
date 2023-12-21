@@ -1,4 +1,5 @@
 CREATE TABLE pred_susu (
+    id SERIAL PRIMARY KEY,
     id_waktu INT8,
     id_lokasi INT8,
     id_unit_ternak INT8,
