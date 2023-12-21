@@ -234,7 +234,7 @@ async def create_prediction(
         
         # format input data 
         input_data_df = pd.DataFrame(input_data_list, columns=['id_tanggal', 'data'])
-        print(input_data_df)
+        
         return
     else:
         # This is for weekly prediction
