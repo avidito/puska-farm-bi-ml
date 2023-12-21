@@ -64,6 +64,10 @@ app = FastAPI()
         },
         404: {
             'model': PredictionResponse,
+            'description': "Data history not found"
+        },
+        422: {
+            'model': PredictionResponse,
             'description': "Model or Scaler not found"
         }
     }
@@ -109,7 +113,7 @@ async def create_prediction(
     if ((predict_request.regency is None) or (predict_request.regency == '')):
         id_lokasi = (
             db.query(DimLokasi.id)
-            .filter(and_(DimLokasi.provinsi == predict_request.province,
+            .filter(and_(DimLokasi.provinsi == predict_request.province.lower(),
                          DimLokasi.kabupaten_kota  == None))
             .first()
         )
@@ -129,8 +133,8 @@ async def create_prediction(
     else:
         id_lokasi = (
             db.query(DimLokasi.id)
-            .filter(and_(DimLokasi.provinsi == predict_request.province,
-                         DimLokasi.kabupaten_kota  == predict_request.regency))
+            .filter(and_(DimLokasi.provinsi == predict_request.province.lower(),
+                         DimLokasi.kabupaten_kota  == predict_request.regency.lower()))
             .first()
         )
         
@@ -208,10 +212,10 @@ async def create_prediction(
                 .filter(and_(FactProduksi.id_waktu == id_tanggal,
                              FactProduksi.id_lokasi == id_lokasi,
                              FactProduksi.id_unit_ternak == id_unit_ternak))
-                .first()
+                .all()
             )
             
-            if (data is None):
+            if (len(data) == 0):
                 data_pred = (
                     db.query(PredSusu.prediction)
                     .filter(and_(PredSusu.id_waktu == id_tanggal,
@@ -230,130 +234,48 @@ async def create_prediction(
                 else:
                     input_data_list.append([id_tanggal, float(data_pred[0])])
             else:
-                input_data_list.append([id_tanggal, data[0]])
+                sum_data = 0
+                for dt in data:
+                    sum_data += dt[0]
+                input_data_list.append([id_tanggal, sum_data])
         
         # format input data 
         input_data_df = pd.DataFrame(input_data_list, columns=['id_tanggal', 'data'])
+
+        try:
+            model = model_dict[predict_request.time_type][load_key]
+        except:
+            model = None
+            
+        try:
+            scaler = scaler_dict[predict_request.time_type][load_key]
+        except:
+            scaler = None
+            
+        if ((model is None) or (scaler is None)):
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    'message': "model or scaler not found."
+                }
+            )
         
+        print(input_data_df)
+        input_data_df['dt'] = scaler.transform(input_data_df['data'].values.reshape(-1, 1))
+        input_data_model = input_data_df['data'].values.tolist()
+        print(input_data_model)
+        input_data_model = np.array(input_data_model).reshape(1, int(os.getenv('LOOK_BACK')))
+        print(input_data_model)
+        input_data_model = np.reshape(input_data_model, (input_data_model.shape[0], 1, input_data_model[1]))
+        print(input_data_model)
         return
     else:
         # This is for weekly prediction
         pass
     
-    return
-    if predict_request.time_type == '':
-        raise HTTPException(status_code=404, detail='Time type should be not empty')
-    
-    if predict_request.province == '':
-        raise HTTPException(status_code=404, detail='Province should be not empty')
-    else:
-        if predict_request.regency == '':
+        return
 
-            data = (
-                db.query(ProduksiSusu.tgl_produksi, ProduksiSusu.jumlah)
-                .join(UnitTernak, ProduksiSusu.id_unit_ternak == UnitTernak.id)
-                .join(Wilayah, UnitTernak.provinsi_id == Wilayah.id)
-                .filter(and_(Wilayah.nama == predict_request.province, 
-                             ProduksiSusu.tgl_produksi.between(start_date, end_date)))
-                .all()
-            )
-            
-            data = pd.DataFrame(data, columns=['tgl_produksi', 'jumlah'])
-            
-            model = model_dict[predict_request.time_type][predict_request.province]['model']
-            scaler = scaler_dict[predict_request.time_type][predict_request.province]['scaler']
-            
-            predict_type = 'province'
-            
-        else:
-            if predict_request.unit == '':
-                
-                data = (
-                    db.query(ProduksiSusu.tgl_produksi, ProduksiSusu.jumlah)
-                    .join(UnitTernak, ProduksiSusu.id_unit_ternak == UnitTernak.id)
-                    .join(Wilayah, UnitTernak.kota_id == Wilayah.id)
-                    .filter(and_(Wilayah.nama == predict_request.regency, 
-                                 ProduksiSusu.tgl_produksi.between(start_date, end_date)))
-                    .all()
-                )
-                
-                data = pd.DataFrame(data, columns=['tgl_produksi', 'jumlah'])
-                
-                model = model_dict[predict_request.time_type][predict_request.province][predict_request.regency]['model']
-                scaler = scaler_dict[predict_request.time_type][predict_request.province][predict_request.regency]['scaler']
-                
-                predict_type = 'regency'
-                
-            else:
-                
-                data = (
-                    db.query(ProduksiSusu.tgl_produksi, ProduksiSusu.jumlah)
-                    .join(UnitTernak, ProduksiSusu.id_unit_ternak == UnitTernak.id)
-                    .filter(and_(UnitTernak.nama_unit == predict_request.unit, 
-                                 ProduksiSusu.tgl_produksi.between(start_date, end_date)))
-                    .all()
-                )
-                
-                data = pd.DataFrame(data, columns=['tgl_produksi', 'jumlah'])
-                
-                model = model_dict[predict_request.time_type][predict_request.province][predict_request.regency][predict_request.unit]['model']
-                scaler = scaler_dict[predict_request.time_type][predict_request.province][predict_request.regency][predict_request.unit]['scaler']
-                
-                predict_type = 'unit'
-                
-    if len(data) == 0:
-        raise HTTPException(status_code=404, detail='Data history not found')
-    
-    if model == None:
-        raise HTTPException(status_code=404, detail='Model not found')
-    
-    if scaler == None:
-        raise HTTPException(status_code=404, detail='Scaler  not found')
-    
-    if predict_request.time_type == 'daily':
-        data['tgl_produksi'] = pd.to_datetime(data['tgl_produksi'])
-        
-        agg_data = data.groupby('tgl_produksi')['jumlah'].mean().reset_index()  
-        agg_data['jumlah'] = agg_data['jumlah'].astype(float).round(2)
-        
-        expected_date_range = pd.date_range(start=start_date, end=end_date)
-        
-        missing_dates = expected_date_range.difference(agg_data['tgl_produksi'])
-      
-        if len(missing_dates) > 0:
-            
-            for missing_date in missing_dates:
-                
-                if predict_type == 'province':
-                    history_pred = (
-                        db.query(PredictionSusuDailyProvince.prediction)
-                        .filter(and_(PredictionSusuDailyProvince.province == predict_request.province),
-                                     PredictionSusuDailyProvince.date == missing_date.date().strftime("%Y-%m-%d"))
-                        .all()
-                    )
-                elif predict_type == 'regency':
-                    history_pred = (
-                        db.query(PredictionSusuDailyRegency.prediction)
-                        .filter(and_(PredictionSusuDailyRegency.regency == predict_request.regency),
-                                     PredictionSusuDailyRegency.date == missing_date.date().strftime("%Y-%m-%d"))
-                        .all()
-                    )
-                elif predict_type == 'unit':
-                    history_pred = (
-                        db.query(PredictionSusuDailyUnit.prediction)
-                        .filter(and_(PredictionSusuDailyUnit.unit == predict_request.unit),
-                                     PredictionSusuDailyUnit.date == missing_date.date().strftime("%Y-%m-%d"))
-                        .all()
-                    )
-                
-                agg_data.loc[len(agg_data)] = [missing_date, history_pred[0][0]]
-            
-            agg_data = agg_data.sort_values(by='tgl_produksi')
-            
-        ## PREDICTION HERE
-        jumlah_data = agg_data['jumlah']
-        jumlah_data_2d = jumlah_data.values.reshape(-1, 1)
-        agg_data['jumlah'] = scaler.transform(jumlah_data_2d)
+
         
         input_data = agg_data['jumlah'].values.tolist()
         input_data = np.array(input_data).reshape(1, int(os.getenv('LOOK_BACK')))
@@ -452,6 +374,3 @@ async def create_prediction(
         
         return {'OK'}
         
-    elif predict_request.time_type == 'weekly':
-        pass
-    
