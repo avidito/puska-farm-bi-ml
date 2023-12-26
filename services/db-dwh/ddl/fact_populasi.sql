@@ -13,7 +13,7 @@ CREATE TABLE fact_populasi (
     jumlah INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
-    CONSTRAINT fact_populasi_pkey PRIMARY KEY(id_waktu, id_unit_ternak)
+    CONSTRAINT fact_populasi_pkey PRIMARY KEY(id_waktu, id_lokasi, id_unit_ternak, jenis_kelamin, tipe_ternak, tipe_usia)
 );
 
 -- Table: Stream
@@ -31,5 +31,5 @@ CREATE TABLE fact_populasi_stream (
     jumlah INT8,
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
-    CONSTRAINT fact_populasi_stream_pkey PRIMARY KEY(id_waktu, id_unit_ternak)
+    CONSTRAINT fact_populasi_stream_pkey PRIMARY KEY(id_waktu, id_lokasi, id_unit_ternak, jenis_kelamin, tipe_ternak, tipe_usia)
 );
