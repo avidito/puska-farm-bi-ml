@@ -22,9 +22,9 @@ services:
       - puska-db-ops:/var/lib/postgresql/data
 
   db-dwh:
-    image: avidito/postgres-db:15.3-puska-dwh-1.1
-    # build:
-    #   context: ./services/db-dwh
+    image: avidito/postgres-db:15.3-puska-dwh-1.2
+    build:
+      context: ./services/db-dwh
     environment:
       - POSTGRES_USER=${DWH_DB_USER:-puska}
       - POSTGRES_PASSWORD=${DWH_DB_PASSWORD:-puska}
