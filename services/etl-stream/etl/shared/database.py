@@ -63,7 +63,10 @@ def __convert_id(data: dict, col: str, cvt: str) -> dict:
             "id_sumber_pasokan": ("get_id_sumber_pasokan", lambda inp: {"sumber_pasokan": inp}),
             "id_waktu": ("get_id_waktu", __tr_waktu)
         }[cvt]
-        
+    except KeyError as key:
+        raise KeyError(f"No ID Converter with types: {str(key)}.")
+    
+    try:
         # Get ID
         result = run_query(
             query_name,
@@ -74,10 +77,12 @@ def __convert_id(data: dict, col: str, cvt: str) -> dict:
         # Replace Value
         data.pop(col)
         data[cvt] = result[cvt]
-        return data
-    
     except KeyError as key:
-        raise KeyError(f"No ID Converter with types: {str(key)}.")
+        raise KeyError(f"No column {str(key)} in the data.")
+    
+    return data
+    
+    
 
 
 def __get_query(query_name: str, query_dir: str = SHARED_QUERY_DIR) -> str:
