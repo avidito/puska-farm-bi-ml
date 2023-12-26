@@ -16,12 +16,12 @@ def main(data: dict):
         valid_event: schemas.EventFactProduksi = schemas.validating_event(data, schemas.EventFactProduksi, logger)
         
         # Processing
-        data_tr_1 = database.get_dwh_ids(valid_event.data.model_dump(), {
+        data_tr_1 = database.get_dwh_ids(valid_event.identifier.model_dump(), {
             "tgl_produksi": "id_waktu",
             "sumber_pasokan": "id_sumber_pasokan"
         })
         data_tr_2 = database.get_dwh_id_lokasi_from_ut(data_tr_1)
-        prep_data = __prepare_data(data_tr_2)
+        prep_data = __prepare_data(data_tr_2, valid_event.action, valid_event.amount.model_dump())
 
         # Update DWH
         __update_dwh(prep_data)
@@ -33,8 +33,14 @@ def main(data: dict):
 
 
 # Process
-def __prepare_data(data: dict) -> schemas.TableFactProduksi:
-    jumlah_produksi = data.pop("jumlah")
+def __prepare_data(data: dict, action: str, amount: dict) -> schemas.TableFactProduksi:
+    if (action == "CREATE"):
+        jumlah_produksi = amount["jumlah"]
+    elif (action == "DELETE"):
+        jumlah_produksi = amount["jumlah"] * (-1)
+    elif (action == "UPDATE"):
+        jumlah_produksi = amount["jumlah"] - amount["prev_jumlah"]
+    
     prep_data = {
         **data,
         "jumlah_produksi": jumlah_produksi

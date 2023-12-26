@@ -1,6 +1,6 @@
 import logging
 import pydantic
-from typing import Type
+from typing import Type, Union
 from datetime import date
 
 
@@ -16,32 +16,87 @@ def validating_event(data: dict, Base: Type[pydantic.BaseModel], logger: logging
 # Schemas - Produksi
 """
 JSON Sample:
+
+##### CREATE #####
+# Indented
 {
-    "source_table": "produksi",
-    "data": {
+    "source_table": "produksi_susu",
+    "action": "CREATE",
+    "identifier": {
         "tgl_produksi": "2023-12-23",
         "id_unit_ternak": 1,
         "id_jenis_produk": 1,
-        "sumber_pasokan": "Pengepul",
+        "sumber_pasokan": "Pengepul"
+    },
+    "amount": {
         "jumlah": 10000
     }
 }
 
-Input for Kafka Producer Console (flatten):
-{"source_table": "produksi", "data": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul", "jumlah": 10000}}
-{"source_table": "produksi", "data": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul", "jumlah": -10000}}
+# Flatten
+{"source_table": "produksi", "action": "CREATE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
+
+##### DELETE #####
+# Indented
+{
+    "source_table": "produksi_susu",
+    "action": "DELETE",
+    "identifier": {
+        "tgl_produksi": "2023-12-23",
+        "id_unit_ternak": 1,
+        "id_jenis_produk": 1,
+        "sumber_pasokan": "Pengepul"
+    },
+    "amount": {
+        "jumlah": 10000
+    }
+}
+
+# Flatten
+{"source_table": "produksi_susu", "action": "DELETE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
+
+##### UPDATE #####
+# Indented
+{
+    "source_table": "produksi_susu",
+    "action": "UPDATE",
+    "identifier": {
+        "tgl_produksi": "2023-12-23",
+        "id_unit_ternak": 1,
+        "id_jenis_produk": 1,
+        "sumber_pasokan": "Pengepul"
+    },
+    "amount": {
+        "jumlah": 8000,
+        "prev_jumlah": 10000
+    }
+}
+
+# Flatten
+{"source_table": "produksi_susu", "action": "UPDATE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 8000, "prev_jumlah": 10000}}
+
 """
-class DataProduksi(pydantic.BaseModel):
+# Event
+class IdentifierFactProduksi(pydantic.BaseModel):
     tgl_produksi: date
     id_unit_ternak: int
     id_jenis_produk: int
     sumber_pasokan: str
+
+class AmountFactProduksi(pydantic.BaseModel):
     jumlah: int
+
+class AmountUpdateFactProduksi(pydantic.BaseModel):
+    jumlah: int
+    prev_jumlah: int
 
 class EventFactProduksi(pydantic.BaseModel):
     source_table: str
-    data: DataProduksi
+    action: str
+    identifier: IdentifierFactProduksi
+    amount: Union[AmountUpdateFactProduksi, AmountFactProduksi]
 
+# Table
 class TableFactProduksi(pydantic.BaseModel):
     id_waktu: int
     id_lokasi: int
