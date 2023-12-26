@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 from datetime import date
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import ResourceClosedError
@@ -8,10 +8,25 @@ from sqlalchemy.exc import ResourceClosedError
 # Public
 SHARED_QUERY_DIR = os.path.join(os.path.dirname(__file__), "sql")
 
-def get_dwh_ids(data: dict, convert_params: dict):
+def get_dwh_ids(data: dict, convert_params: dict) -> dict:
     cvt_data = data
     for col, cvt in convert_params.items():
         cvt_data = __convert_id(cvt_data, col, cvt)
+    return cvt_data
+
+
+def get_dwh_ids_from_id_peternak(data: dict, columns: Tuple[str], pop: bool = True) -> dict:
+    cvt_data = data
+    for col in columns:
+        result = run_query(
+            f"get_{col}_from_id_peternak",
+            SHARED_QUERY_DIR,
+            {"id_peternak": data["id_peternak"]}
+        )[0]
+        cvt_data[col] = result[col]
+    
+    if (pop):
+        cvt_data.pop("id_peternak")
     return cvt_data
 
 
