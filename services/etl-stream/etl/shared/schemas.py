@@ -214,3 +214,140 @@ class TableFactDistribusi(pydantic.BaseModel):
     id_jenis_produk: int
     jumlah_distribusi: int
     jumlah_penjualan: int
+
+
+"""
+Table - Populasi
+Source:
+    - history_populasi
+"""
+class TableFactPopulasi(pydantic.BaseModel):
+    id_waktu: int
+    id_lokasi: int
+    id_unit_ternak: int
+    jenis_kelamin: str
+    tipe_ternak: str
+    tipe_usia: str
+    jumlah_lahir: int = 0
+    jumlah_mati: int = 0
+    jumlah_masuk: int = 0
+    jumlah_keluar: int = 0
+    jumlah: int
+    flag_delete: bool
+
+
+"""
+Schemas - Populasi - History Populasi
+JSON Sample:
+
+##### CREATE #####
+# Indented
+{
+    "source_table": "history_populasi",
+    "action": "CREATE",
+    "identifier": {
+        "tgl_pencatatan": "2023-12-23",
+        "id_peternak": 2
+    },
+    "amount": {
+        "jml_pedaging_jantan": 10,
+        "jml_pedaging_betina": 10,
+        "jml_pedaging_anakan_jantan": 10,
+        "jml_pedaging_anakan_betina": 10,
+        "jml_perah_jantan": 10,
+        "jml_perah_betina": 10,
+        "jml_perah_anakan_jantan": 10,
+        "jml_perah_anakan_betina": 10
+    }
+}
+
+# Flatten
+{"source_table": "history_populasi", "action": "CREATE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_peternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
+
+##### DELETE #####
+# Indented
+{
+    "source_table": "history_populasi",
+    "action": "DELETE",
+    "identifier": {
+        "tgl_pencatatan": "2023-12-23",
+        "id_peternak": 2
+    },
+    "amount": {
+        "jml_pedaging_jantan": 10,
+        "jml_pedaging_betina": 10,
+        "jml_pedaging_anakan_jantan": 10,
+        "jml_pedaging_anakan_betina": 10,
+        "jml_perah_jantan": 10,
+        "jml_perah_betina": 10,
+        "jml_perah_anakan_jantan": 10,
+        "jml_perah_anakan_betina": 10
+    }
+}
+
+# Flatten
+{"source_table": "history_populasi", "action": "DELETE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_peternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
+
+##### UPDATE #####
+# Indented
+{
+    "source_table": "history_populasi",
+    "action": "DELETE",
+    "identifier": {
+        "tgl_pencatatan": "2023-12-23",
+        "id_peternak": 2
+    },
+    "amount": {
+        "jml_pedaging_jantan": 10,
+        "jml_pedaging_betina": 10,
+        "jml_pedaging_anakan_jantan": 10,
+        "jml_pedaging_anakan_betina": 10,
+        "jml_perah_jantan": 10,
+        "jml_perah_betina": 10,
+        "jml_perah_anakan_jantan": 10,
+        "jml_perah_anakan_betina": 10,
+        "prev_jml_pedaging_jantan": 10,
+        "prev_jml_pedaging_betina": 10,
+        "prev_jml_pedaging_anakan_jantan": 10,
+        "prev_jml_pedaging_anakan_betina": 10,
+        "prev_jml_perah_jantan": 10,
+        "prev_jml_perah_betina": 10,
+        "prev_jml_perah_anakan_jantan": 10,
+        "prev_jml_perah_anakan_betina": 10
+    }
+}
+
+# Flatten
+{"source_table": "history_populasi", "action": "DELETE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_peternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10, "prev_jml_pedaging_jantan": 10, "prev_jml_pedaging_betina": 10, "prev_jml_pedaging_anakan_jantan": 10, "prev_jml_pedaging_anakan_betina": 10, "prev_jml_perah_jantan": 10, "prev_jml_perah_betina": 10, "prev_jml_perah_anakan_jantan": 10, "prev_jml_perah_anakan_betina": 10}}
+
+"""
+
+class IdentifierFactPopulasi(pydantic.BaseModel):
+    tgl_pencatatan: date
+    id_peternak: int
+
+class AmountFactPopulasi(pydantic.BaseModel):
+    jml_pedaging_jantan: int
+    jml_pedaging_betina: int
+    jml_pedaging_anakan_jantan: int
+    jml_pedaging_anakan_betina: int
+    jml_perah_jantan: int
+    jml_perah_betina: int
+    jml_perah_anakan_jantan: int
+    jml_perah_anakan_betina: int
+
+class AmountUpdateFactPopulasi(AmountFactPopulasi):
+    prev_jml_pedaging_jantan: int
+    prev_jml_pedaging_betina: int
+    prev_jml_pedaging_anakan_jantan: int
+    prev_jml_pedaging_anakan_betina: int
+    prev_jml_perah_jantan: int
+    prev_jml_perah_betina: int
+    prev_jml_perah_anakan_jantan: int
+    prev_jml_perah_anakan_betina: int
+
+class EventFactPopulasi(pydantic.BaseModel):
+    source_table: str
+    action: str
+    identifier: IdentifierFactPopulasi
+    amount: Union[AmountUpdateFactPopulasi, AmountFactPopulasi]
