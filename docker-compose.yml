@@ -9,7 +9,7 @@ volumes:
   puska-kafka-secrets:
 services:
   db-ops:
-    image: avidito/postgres-db:15.3-puska-ops-1.0
+    image: avidito/postgres-db:15.3-puska-ops-1.1
     build:
       context: ./services/db-ops
     environment:
