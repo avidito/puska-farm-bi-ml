@@ -1,44 +1,39 @@
-WITH provinsi AS (
+WITH cte_provinsi AS (
   SELECT
-    kode AS kode_provinsi,
-    nama
+    id,
+    kode,
+    nama AS provinsi,
+    NULL AS kabupaten_kota
   FROM wilayah
   WHERE LENGTH(REGEXP_REPLACE(kode, '[^.]', '', 'g')) = 0
 ),
-kabupaten_kota AS (
+cte_kabupaten_kota AS (
   SELECT
-    SPLIT_PART(kode, '.', 2) AS kode_kabupaten_kota,
-    REGEXP_REPLACE(nama, '(KAB.|KOTA) ', '') AS nama
-  FROM wilayah
-  WHERE LENGTH(REGEXP_REPLACE(kode, '[^.]', '', 'g')) = 1
-),
-kecamatan AS (
-  SELECT
-    SPLIT_PART(kode, '.', 2) AS kode_kecamatan,
-    UPPER(nama) AS nama
-  FROM wilayah
-  WHERE LENGTH(REGEXP_REPLACE(kode, '[^.]', '', 'g')) = 2
-),
-desa_kelurahan AS (
-  SELECT
-    id,
-    SPLIT_PART(kode, '.', 1) AS kode_provinsi,
-    SPLIT_PART(kode, '.', 2) AS kode_kabupaten_kota,
-    SPLIT_PART(kode, '.', 3) AS kode_kecamatan,
-    UPPER(nama) AS nama
-  FROM wilayah
-  WHERE LENGTH(REGEXP_REPLACE(kode, '[^.]', '', 'g')) = 3
+    kk.id,
+    kk.kode,
+    p.provinsi,
+    (CASE
+      WHEN kk.kabupaten_kota = 'KEP. SERIBU' THEN 'KEPULAUAN SERIBU'
+      ELSE kk.kabupaten_kota
+    END) AS kabupaten_kota
+  FROM (
+    SELECT
+      w.id,
+      w.kode,
+      (REGEXP_MATCH(w.kode, '^[0-9]+(?=\.)'))[1] AS prov_kode,
+      REPLACE(REGEXP_REPLACE(w.nama, '(KAB.|KOTA) ', ''), 'ADM. ', '') AS kabupaten_kota
+    FROM wilayah AS w
+    WHERE LENGTH(REGEXP_REPLACE(kode, '[^.]', '', 'g')) = 1
+  ) AS kk
+    LEFT JOIN cte_provinsi AS p
+      ON kk.prov_kode = p.kode
 )
 SELECT
-  kel.id,
-  p.nama AS provinsi,
-  kk.nama AS kabupaten_kota,
-  kec.nama AS kecamatan,
-  kel.nama AS desa_kelurahan
-FROM desa_kelurahan AS kel
-JOIN kecamatan AS kec
-  ON kel.kode_kecamatan = kec.kode_kecamatan
-JOIN kabupaten_kota AS kk
-  ON kel.kode_kabupaten_kota = kk.kode_kabupaten_kota
-JOIN provinsi AS p
-  ON kel.kode_provinsi = p.kode_provinsi
+  id,
+  provinsi,
+  kabupaten_kota
+FROM (
+  SELECT id, provinsi, NULL AS kabupaten_kota FROM cte_provinsi
+  UNION ALL 
+  SELECT id, provinsi, kabupaten_kota FROM cte_kabupaten_kota
+) AS ud;

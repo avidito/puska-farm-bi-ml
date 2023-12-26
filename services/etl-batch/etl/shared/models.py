@@ -73,14 +73,24 @@ class DimUnitTernak(Base, LoadDtMixin):
     longitude = Column(Float)
     latitiude = Column(Float)
 
+class DimWaktu(Base, LoadDtMixin):
+    __tablename__ = "dim_waktu"
+
+    id = Column(Integer, primary_key=True)
+    tahun = Column(Integer)
+    bulan = Column(Integer)
+    minggu = Column(Integer)
+    tanggal = Column(Integer)
+
 # Fact
 class FactDistribusi(Base, LoadDtMixin):
     __tablename__ = "fact_distribusi"
 
+    id_waktu = Column(Integer, primary_key=True)
+    id_lokasi = Column(Integer, primary_key=True)
     id_unit_ternak = Column(Integer, primary_key=True)
     id_mitra_bisnis = Column(Integer, primary_key=True)
     id_jenis_produk = Column(Integer, primary_key=True)
-    tanggal = Column(Integer, primary_key=True)
     jumlah_distribusi = Column(Integer)
     harga_minimum = Column(Integer)
     harga_maksimum = Column(Integer)
@@ -103,6 +113,7 @@ class FactPopulasi(Base, LoadDtMixin):
 class FactProduksi(Base, LoadDtMixin):
     __tablename__ = "fact_produksi"
 
+    id_lokasi = Column(Integer, primary_key=True)
     id_unit_ternak = Column(Integer, primary_key=True)
     id_sumber_pasokan = Column(Integer, primary_key=True)
     id_jenis_produk = Column(Integer, primary_key=True)

@@ -9,9 +9,9 @@ volumes:
   puska-kafka-secrets:
 services:
   db-ops:
-    image: avidito/postgres-db:15.3-puska-ops-1.0
-    # build:
-    #   context: ./services/db-ops
+    image: avidito/postgres-db:15.3-puska-ops-1.1
+    build:
+      context: ./services/db-ops
     environment:
       - POSTGRES_USER=${OPS_DB_USER:-puska}
       - POSTGRES_PASSWORD=${OPS_DB_PASSWORD:-puska}
@@ -34,24 +34,24 @@ services:
     volumes:
       - puska-db-dwh:/var/lib/postgresql/data
   
-  # etl-batch:
-  #   image: avidito/puska-etl-batch:1.0-beam2.52.0
-  #   # build:
-  #   #   context: ./services/etl-batch
-  #   environment:
-  #     - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-db-dwh}
-  #     - DWH_DB_PORT=${DWH_DB_PORT:-5432}
-  #     - DWH_DB_NAME=${DWH_DB_NAME:-puska}
-  #     - DWH_DB_USER=${DWH_DB_USER:-puska}
-  #     - DWH_DB_PASSWORD=${DWH_DB_PASSWORD:-puska}
-  #     - OPS_DB_HOSTNAME=${OPS_DB_HOSTNAME:-db-ops}
-  #     - OPS_DB_PORT=${OPS_DB_PORT:-5432}
-  #     - OPS_DB_NAME=${OPS_DB_NAME:-puska}
-  #     - OPS_DB_USER=${OPS_DB_USER:-puska}
-  #     - OPS_DB_PASSWORD=${OPS_DB_PASSWORD:-puska}
-  #   entrypoint: ["sleep", "infinity"]
-  #   volumes:
-  #     - ./services/etl-batch/etl:/scripts/etl
+  etl-batch:
+    image: avidito/beam-python:2.52.0-puska-batch-1.1
+    build:
+      context: ./services/etl-batch
+    environment:
+      - DWH_DB_HOSTNAME=${DWH_DB_HOSTNAME:-db-dwh}
+      - DWH_DB_PORT=${DWH_DB_PORT:-5432}
+      - DWH_DB_NAME=${DWH_DB_NAME:-puska}
+      - DWH_DB_USER=${DWH_DB_USER:-puska}
+      - DWH_DB_PASSWORD=${DWH_DB_PASSWORD:-puska}
+      - OPS_DB_HOSTNAME=${OPS_DB_HOSTNAME:-db-ops}
+      - OPS_DB_PORT=${OPS_DB_PORT:-5432}
+      - OPS_DB_NAME=${OPS_DB_NAME:-puska}
+      - OPS_DB_USER=${OPS_DB_USER:-puska}
+      - OPS_DB_PASSWORD=${OPS_DB_PASSWORD:-puska}
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - ./services/etl-batch/etl:/scripts/etl
     
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
