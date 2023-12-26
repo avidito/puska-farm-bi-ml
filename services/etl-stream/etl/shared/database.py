@@ -15,20 +15,6 @@ def get_dwh_ids(data: dict, convert_params: dict):
     return cvt_data
 
 
-def get_dwh_id_lokasi_from_ut(data: dict, col: str = "id_unit_ternak"):
-    result = run_query(
-        query_name = "get_id_lokasi_from_ut",
-        query_dir = SHARED_QUERY_DIR,
-        params = {"id_unit_ternak": data[col]}
-    )[0]
-    
-    cvt_data = {
-        **data,
-        "id_lokasi": result["id_lokasi"]
-    }
-    return cvt_data
-
-
 def run_query(query_name: str, query_dir: str, params: Optional[dict] = None) -> list:
     params = params if (params) else {}
 
