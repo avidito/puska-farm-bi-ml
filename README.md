@@ -9,7 +9,7 @@ Puska - Farm Business Intelligence and Machine Learning Streaming Services.
 
 |No|Name|Type|Description|Image|Version|
 |--:|:--|---|:--|:--|:--|
-|1|db-ops|Database|Opearational database (application data)|avidito/postgres-db|15.3-puska-ops-1.0|
+|1|db-ops|Database|Opearational database (application data)|avidito/postgres-db|15.3-puska-ops-1.1|
 |2|db-dwh|Database|Data warehouse for BI and report|avidito/postgres-db|15.3-puska-dwh-1.0|
 |3|etl-batch|ETL|Batch data processing|1.0-beam2.52.0|
 |4|kafka|Broker|Message broker for streaming data|7.5.0|
