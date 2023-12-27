@@ -3,6 +3,7 @@ import logging
 from kafka import KafkaConsumer
 
 
+# Main
 def get_stream_source(sequence_name: str, topic: str, host: str, process: callable, logger: logging.Logger):
     try:
         logger.info(f"Starting - {sequence_name}")

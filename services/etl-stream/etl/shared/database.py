@@ -82,8 +82,6 @@ def __convert_id(data: dict, col: str, cvt: str) -> dict:
         raise KeyError(f"No column {str(key)} in the data.")
     
     return data
-    
-    
 
 
 def __get_query(query_name: str, query_dir: str = SHARED_QUERY_DIR) -> str:
@@ -94,6 +92,27 @@ def __get_query(query_name: str, query_dir: str = SHARED_QUERY_DIR) -> str:
 
 
 # Private - Connection
+from pydantic_settings import BaseSettings
+from pydantic import Field, SecretStr, field_serializer
+
+class ConfigDWHDatabase(BaseSettings):
+    host: str = Field(alias="dwh_db_hostname")
+    port: int = Field(alias="dwh_db_port")
+    database: str = Field(alias="dwh_db_name")
+    username: str = Field(alias="dwh_db_user")
+    password: SecretStr = Field(alias="dwh_db_password")
+
+CONFIG = ConfigDWHDatabase()
+
 def __get_db():
-    engine = create_engine("postgresql://puska:puska@localhost:5601/puska", future=True)
+    engine = create_engine(
+        "postgresql://{username}:{password}@{host}:{port}/{database}".format(
+            username = CONFIG.username,
+            password = CONFIG.password.get_secret_value(),
+            host = CONFIG.host,
+            port = CONFIG.port,
+            database = CONFIG.database
+        ),
+        future=True
+    )
     return engine
