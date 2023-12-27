@@ -14,7 +14,7 @@ Puska - Farm Business Intelligence and Machine Learning Streaming Services.
 |3|zookeeper|Manager|Cluster manager for Kafka|confluentinc/cp-zookeeper|7.5.0|
 |4|kafka|Broker|Message broker for streaming data|confluentinc/cp-kafka|7.5.0|
 |5|etl-batch|ETL|Batch data processing|avidito/beam-python|2.52.0-puska-batch-1.1|
-|6|etl-batch|ETL|Batch data processing|avidito/kafka-stream-py|2.0.2-puska-etl-1.0|
+|6|etl-stream|ETL|Stream data processing|avidito/kafka-stream-py|2.0.2-puska-etl-1.0|
 
 
 
