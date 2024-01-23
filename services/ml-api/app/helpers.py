@@ -69,12 +69,12 @@ def load_scaler():
             if (folder == '.DS_Store'):
                 continue
             
-            try:
-                scaler_dict[time_type][folder] = joblib.load(
-                    os.path.join(scaler_path, time_type, folder, 'scaler.joblib')
-                )
-            except:
-                scaler_dict[time_type][folder] = None
+            # try:
+            scaler_dict[time_type][folder] = joblib.load(
+                os.path.join(scaler_path, time_type, folder, 'scaler.joblib')
+            )
+            # except:
+            #     scaler_dict[time_type][folder] = None
             
     return scaler_dict
     
