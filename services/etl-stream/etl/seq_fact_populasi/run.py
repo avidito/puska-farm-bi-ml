@@ -1,4 +1,6 @@
 import os
+import json
+from datetime import datetime
 from typing import List
 from etl.shared import (
     database,
@@ -8,11 +10,13 @@ from etl.shared import (
 )
 logger = log.create_logger()
 QUERY_DIR = os.path.join(os.path.dirname(__file__), "query")
+SHARED_DIR = os.path.dirname(os.path.dirname(__file__), "shared", "query")
 
 
 # Main Sequence
 def main(data: dict):
     try:
+        start_tm = datetime.now()
         # Validation
         valid_event: schemas.EventFactPopulasi = schemas.validating_event(data, schemas.EventFactPopulasi, logger)
         
@@ -32,6 +36,19 @@ def main(data: dict):
             )
         
         logger.info("Processed - Status: OK")
+        end_tm = datetime.now()
+        duration = round((end_tm - start_tm).total_seconds(), 2)
+        database.run_query(
+            query_name = "logging",
+            query_dir = SHARED_DIR,
+            params = {
+                "payload": json.dumps(prep_data[0].model_dump()),
+                "start_tm": start_tm,
+                "end_tm": end_tm,
+                "duration": duration
+            }
+        )
+
     except Exception as err:
         logger.error(str(err))
         logger.info("Processed - Status: FAILED")

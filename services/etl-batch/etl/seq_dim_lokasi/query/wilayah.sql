@@ -36,4 +36,6 @@ FROM (
   SELECT id, provinsi, NULL AS kabupaten_kota FROM cte_provinsi
   UNION ALL 
   SELECT id, provinsi, kabupaten_kota FROM cte_kabupaten_kota
-) AS ud;
+) AS ud
+UNION ALL
+SELECT 999 AS id, '' AS provinsi, '' AS kabupaten_kota;
