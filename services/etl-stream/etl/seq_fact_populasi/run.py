@@ -10,7 +10,7 @@ from etl.shared import (
 )
 logger = log.create_logger()
 QUERY_DIR = os.path.join(os.path.dirname(__file__), "query")
-SHARED_DIR = os.path.dirname(os.path.dirname(__file__), "shared", "query")
+SHARED_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "shared", "sql")
 
 
 # Main Sequence
