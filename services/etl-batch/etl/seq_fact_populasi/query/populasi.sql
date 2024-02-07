@@ -104,6 +104,7 @@ SELECT
   id_unit_ternak,
   jenis_kelamin,
   tipe_ternak,
+  '' AS tipe_usia,
   jumlah_lahir,
   jumlah_mati,
   jumlah_masuk,
