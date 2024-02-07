@@ -1,0 +1,1 @@
+from src.services.v1.bi.routers import router as v1_bi_router
