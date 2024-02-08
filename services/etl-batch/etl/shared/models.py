@@ -25,13 +25,12 @@ class DimLokasi(Base, LoadDtMixin):
     provinsi = Column(String(255))
     kabupaten_kota = Column(String(255))
     kecamatan = Column(String(255))
-    desa_kelurahan = Column(String(255))
 
 class DimMitraBisnis(Base, LoadDtMixin):
     __tablename__ = "dim_mitra_bisnis"
 
     id = Column(Integer, primary_key=True)
-    id_unit_ternak = Column(Integer)
+    id_unit_peternak = Column(Integer)
     nama_mitra_bisnis = Column(String(20))
     kategori_mitra_bisnis = Column(String(255))
 
@@ -39,7 +38,7 @@ class DimPengepul(Base, LoadDtMixin):
     __tablename__ = "dim_pengepul"
 
     id = Column(Integer, primary_key=True)
-    id_unit_ternak = Column(Integer)
+    id_unit_peternak = Column(Integer)
     nama_pengepul = Column(String(255))
     jenis_pengepul = Column(String(255))
     jenis_kelamin = Column(String(255))
@@ -50,7 +49,7 @@ class DimPeternakan(Base, LoadDtMixin):
     __tablename__ = "dim_peternakan"
 
     id = Column(Integer, primary_key=True)
-    id_unit_ternak = Column(Integer)
+    id_unit_peternakan = Column(Integer)
     nama_peternakan = Column(String(255))
     nama_pemilik = Column(String(255))
     jenis_kelamin = Column(String(255))
@@ -63,7 +62,7 @@ class DimSumberPasokan(Base, LoadDtMixin):
     id = Column(Integer, primary_key=True)
     nama_sumber_pasokan = Column(String(255))
 
-class DimUnitTernak(Base, LoadDtMixin):
+class DimUnitPeternak(Base, LoadDtMixin):
     __tablename__ = "dim_unit_ternak"
     
     id = Column(Integer, primary_key=True)
@@ -88,7 +87,7 @@ class FactDistribusi(Base, LoadDtMixin):
 
     id_waktu = Column(Integer, primary_key=True)
     id_lokasi = Column(Integer, primary_key=True)
-    id_unit_ternak = Column(Integer, primary_key=True)
+    id_unit_peternakan = Column(Integer, primary_key=True)
     id_mitra_bisnis = Column(Integer, primary_key=True)
     id_jenis_produk = Column(Integer, primary_key=True)
     jumlah_distribusi = Column(Integer)
@@ -114,7 +113,7 @@ class FactProduksi(Base, LoadDtMixin):
     __tablename__ = "fact_produksi"
 
     id_lokasi = Column(Integer, primary_key=True)
-    id_unit_ternak = Column(Integer, primary_key=True)
+    id_unit_peternakan = Column(Integer, primary_key=True)
     id_sumber_pasokan = Column(Integer, primary_key=True)
     id_jenis_produk = Column(Integer, primary_key=True)
     tanggal = Column(Date, primary_key=True)

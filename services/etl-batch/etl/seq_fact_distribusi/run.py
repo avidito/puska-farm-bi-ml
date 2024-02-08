@@ -28,7 +28,7 @@ def main():
             )
             | "Create Date ID Dict" >> beam.Map(
                 lambda x: (
-                    datetime.strptime(f"{x['tahun']}-{x['bulan']}-{x['tanggal']}", "%Y-%m-%d").date(),
+                    x['tanggal'],
                     x['id']
                 )
             )

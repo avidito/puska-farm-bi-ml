@@ -4,10 +4,10 @@ WITH cte_lama AS (
 ),
 cte_baru AS (
   SELECT
+    dt AS tanggal,
     DATE_PART('year', dt) AS tahun,
     DATE_PART('month', dt) AS bulan,
-    DATE_PART('week', dt) AS minggu,
-    DATE_PART('day', dt) AS tanggal
+    DATE_PART('day', dt) AS hari
   FROM (
     SELECT dt::date
     FROM GENERATE_SERIES(
@@ -18,14 +18,14 @@ cte_baru AS (
   ) AS gen_dt
 )
 SELECT
-  ROW_NUMBER() OVER (ORDER BY tahun, bulan, minggu, tanggal) AS id,
+  ROW_NUMBER() OVER (ORDER BY tanggal) AS id,
+  tanggal,
   tahun,
   bulan,
-  minggu,
-  tanggal
+  hari
 FROM (
-  SELECT tahun, NULL AS bulan, NULL AS minggu, NULL AS tanggal FROM cte_lama
+  SELECT NULL AS tanggal, tahun, NULL AS bulan, NULL AS hari FROM cte_lama
   UNION ALL
-  SELECT tahun, bulan, minggu, tanggal FROM cte_baru
+  SELECT tanggal, tahun, bulan, hari FROM cte_baru
 ) AS ud
 ORDER BY 1;

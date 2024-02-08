@@ -101,9 +101,10 @@ cte_populasi AS (
 SELECT
   tanggal,
   id_lokasi,
-  id_unit_ternak,
+  id_unit_ternak AS id_unit_peternak,
   jenis_kelamin,
   tipe_ternak,
+  '' AS tipe_usia,
   jumlah_lahir,
   jumlah_mati,
   jumlah_masuk,

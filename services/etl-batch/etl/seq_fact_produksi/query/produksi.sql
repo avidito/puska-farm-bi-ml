@@ -31,7 +31,7 @@ cte_sumber_pasokan AS (
     ) AS sp
 )
 SELECT
-  p.id_unit_ternak,
+  p.id_unit_ternak AS id_unit_peternak,
   ut.kota_id AS id_lokasi,
   sp.id AS id_sumber_pasokan,
   p.id_jenis_produk,
