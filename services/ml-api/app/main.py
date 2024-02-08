@@ -95,7 +95,7 @@ async def create_prediction(
     if (predict_input.regency is None) or (predict_input.regency == ''):
         id_lokasi = (
             db.query(DimLokasi.id)
-            .where(and_(DimLokasi.provinsi.like(f"%{predict_input.province}%"),
+            .where(and_(DimLokasi.provinsi.like(f"%{predict_input.province.upper()}%"),
                         DimLokasi.kabupaten_kota == None))
             .first()
         )
@@ -116,8 +116,8 @@ async def create_prediction(
     else:
         id_lokasi = (
             db.query(DimLokasi.id)
-            .where(and_(DimLokasi.provinsi.like(f"%{predict_input.province}%"),
-                        DimLokasi.kabupaten_kota.like(f"%{predict_input.regency}%")))
+            .where(and_(DimLokasi.provinsi.like(f"%{predict_input.province.upper()}%"),
+                        DimLokasi.kabupaten_kota.like(f"%{predict_input.regency.upper()}%")))
             .first()
         )
    
