@@ -1,5 +1,5 @@
 -- Table
-CREATE TABLE dim_unit_ternak (
+CREATE TABLE dim_unit_peternak (
     id INT8,
     id_lokasi INT8,
     nama_unit VARCHAR(100),
@@ -8,5 +8,5 @@ CREATE TABLE dim_unit_ternak (
     latitude NUMERIC(12,10),
     created_dt TIMESTAMP,
     modified_dt TIMESTAMP,
-    CONSTRAINT dim_unit_ternak_pkey PRIMARY KEY(id)
+    CONSTRAINT dim_unit_peternak_pkey PRIMARY KEY(id)
 );

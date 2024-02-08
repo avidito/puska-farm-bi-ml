@@ -1,7 +1,7 @@
 -- Table
 CREATE TABLE dim_pengepul (
     id INT8,
-    id_unit_ternak INT8,
+    id_unit_peternak INT8,
     nama_pengepul VARCHAR(100),
     jenis_pengepul VARCHAR(100),
     jenis_kelamin VARCHAR(10),

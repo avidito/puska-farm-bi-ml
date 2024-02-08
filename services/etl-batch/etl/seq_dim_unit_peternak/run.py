@@ -11,7 +11,7 @@ sequence_logger = log.create_logger()
 
 
 # Main Sequence
-@log.time_it_seq("Batch - Sequence dim_unit_ternak", sequence_logger)
+@log.time_it_seq("Batch - Sequence dim_unit_peternak", sequence_logger)
 def main():
     # Variables
     TZINFO = pendulum.timezone("Asia/Jakarta")
@@ -27,12 +27,12 @@ def main():
                 query = database.get_query(QUERY_DIR, "unit_ternak")
             )
             | "Enrich System Data" >> beam.Map(database.enrich_system_data(datetime.now(TZINFO)))
-            | "Load Data - dim_unit_ternak" >> relational_db.Write(
+            | "Load Data - dim_unit_peternak" >> relational_db.Write(
                 source_config = connection.get_connection("dwh-db"),
                 table_config = relational_db.TableConfiguration(
-                    name = "dim_unit_ternak",
+                    name = "dim_unit_peternak",
                     create_if_missing = True,
-                    define_table_f = models.DimUnitTernak,
+                    define_table_f = models.DimUnitPeternak,
                     create_insert_f = database.update_insert
                 )
             )

@@ -51,11 +51,11 @@ def run_query(query_name: str, query_dir: str, params: Optional[dict] = None) ->
 # Private - Converter
 def __convert_id(data: dict, col: str, cvt: str) -> dict:
     def __tr_waktu(inp: date):
-        tahun, bulan, tanggal = inp.strftime("%Y-%m-%d").split("-")
+        # tahun, bulan, tanggal = inp.strftime("%Y-%m-%d").split("-")
         return {
-            "tahun": tahun,
-            "bulan": bulan,
-            "tanggal": tanggal
+            # "tahun": tahun,
+            # "bulan": bulan,
+            "tanggal": inp
         }
     
     try:

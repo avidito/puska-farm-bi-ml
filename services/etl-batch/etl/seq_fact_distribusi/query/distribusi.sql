@@ -27,7 +27,7 @@ cte_union_distribusi AS (
 SELECT
   ud.tanggal,
   ut.kota_id AS id_lokasi,
-  ud.id_unit_ternak,
+  ud.id_unit_ternak AS id_unit_peternak,
   ud.id_mitra_bisnis,
   ud.id_jenis_produk,
   SUM(ud.jumlah_distribusi) AS jumlah_distribusi,

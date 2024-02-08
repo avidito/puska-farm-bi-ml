@@ -1,7 +1,7 @@
 INSERT INTO fact_populasi_stream (
   id_waktu,
   id_lokasi,
-  id_unit_ternak,
+  id_unit_peternak,
   jenis_kelamin,
   tipe_ternak,
   tipe_usia,
@@ -16,7 +16,7 @@ INSERT INTO fact_populasi_stream (
 VALUES (
   :id_waktu,
   :id_lokasi,
-  :id_unit_ternak,
+  :id_unit_peternak,
   :jenis_kelamin,
   :tipe_ternak,
   :tipe_usia,
@@ -28,7 +28,7 @@ VALUES (
   CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Jakarta',
   CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Jakarta'
 )
-ON CONFLICT (id_waktu, id_lokasi, id_unit_ternak, jenis_kelamin, tipe_ternak, tipe_usia)
+ON CONFLICT (id_waktu, id_lokasi, id_unit_peternak, jenis_kelamin, tipe_ternak, tipe_usia)
 DO UPDATE SET
   jumlah_lahir = EXCLUDED.jumlah_lahir,
   jumlah_mati = EXCLUDED.jumlah_mati,

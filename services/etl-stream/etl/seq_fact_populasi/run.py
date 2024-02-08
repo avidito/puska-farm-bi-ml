@@ -1,5 +1,6 @@
 import os
 import json
+import pendulum
 from datetime import datetime
 from typing import List
 from etl.shared import (
@@ -11,21 +12,20 @@ from etl.shared import (
 logger = log.create_logger()
 QUERY_DIR = os.path.join(os.path.dirname(__file__), "query")
 SHARED_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "shared", "sql")
-
+TZINFO = pendulum.timezone("Asia/Jakarta")
 
 # Main Sequence
 def main(data: dict):
     try:
-        start_tm = datetime.now()
+        start_tm = datetime.now(TZINFO)
         # Validation
         valid_event: schemas.EventFactPopulasi = schemas.validating_event(data, schemas.EventFactPopulasi, logger)
         
         # Processing
-        data_tr_1 = database.get_dwh_ids(valid_event.identifier.model_dump(), {
+        data_tr = database.get_dwh_ids(valid_event.identifier.model_dump(), {
             "tgl_pencatatan": "id_waktu"
         })
-        data_tr_2 = database.get_dwh_ids_from_id_peternak(data_tr_1, ("id_unit_ternak", "id_lokasi"), pop=False)
-        prep_data = __prepare_data(data_tr_2, valid_event.action, valid_event.amount.model_dump())
+        prep_data = __prepare_data(data_tr, valid_event.action, valid_event.amount.model_dump())
 
         # Update DWH
         for data in prep_data:
@@ -36,12 +36,14 @@ def main(data: dict):
             )
         
         logger.info("Processed - Status: OK")
-        end_tm = datetime.now()
+        end_tm = datetime.now(TZINFO)
         duration = round((end_tm - start_tm).total_seconds(), 2)
         database.run_query(
             query_name = "logging",
             query_dir = SHARED_DIR,
             params = {
+                "table_name": valid_event.source_table,
+                "mode": valid_event.action,
                 "payload": json.dumps(prep_data[0].model_dump()),
                 "start_tm": start_tm,
                 "end_tm": end_tm,

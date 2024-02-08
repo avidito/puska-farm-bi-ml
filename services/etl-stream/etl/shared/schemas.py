@@ -24,7 +24,7 @@ JSON Sample:
     "action": "CREATE",
     "identifier": {
         "tgl_produksi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_jenis_produk": 1,
         "sumber_pasokan": "Pengepul"
@@ -35,7 +35,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "produksi", "action": "CREATE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "id_lokasi": 27696, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
+{"source_table": "produksi", "action": "CREATE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_peternak": 1, "id_jenis_produk": 1, "id_lokasi": 27696, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
 
 ##### DELETE #####
 # Indented
@@ -44,7 +44,7 @@ JSON Sample:
     "action": "DELETE",
     "identifier": {
         "tgl_produksi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_jenis_produk": 1,
         "sumber_pasokan": "Pengepul"
@@ -55,7 +55,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "produksi_susu", "action": "DELETE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_ternak": 1, "id_jenis_produk": 1, "id_lokasi": 27696, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
+{"source_table": "produksi_susu", "action": "DELETE", "identifier": {"tgl_produksi": "2023-12-23", "id_unit_peternak": 1, "id_jenis_produk": 1, "id_lokasi": 27696, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 10000}}
 
 ##### UPDATE #####
 # Indented
@@ -64,7 +64,7 @@ JSON Sample:
     "action": "UPDATE",
     "identifier": {
         "tgl_produksi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_jenis_produk": 1,
         "sumber_pasokan": "Pengepul"
@@ -76,14 +76,14 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "produksi_susu", "action": "UPDATE", "identifier": {"tgl_produksi": "2023-12-23", "id_lokasi": 27696, "id_unit_ternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 8000, "prev_jumlah": 10000}}
+{"source_table": "produksi_susu", "action": "UPDATE", "identifier": {"tgl_produksi": "2023-12-23", "id_lokasi": 27696, "id_unit_peternak": 1, "id_jenis_produk": 1, "sumber_pasokan": "Pengepul"}, "amount": {"jumlah": 8000, "prev_jumlah": 10000}}
 
 """
 # Event
 class IdentifierFactProduksi(pydantic.BaseModel):
     tgl_produksi: date
     id_lokasi: int
-    id_unit_ternak: int
+    id_unit_peternak: int
     id_jenis_produk: int
     sumber_pasokan: str
 
@@ -104,7 +104,7 @@ class EventFactProduksi(pydantic.BaseModel):
 class TableFactProduksi(pydantic.BaseModel):
     id_waktu: int
     id_lokasi: int
-    id_unit_ternak: int
+    id_unit_peternak: int
     id_jenis_produk: int
     id_sumber_pasokan: int
     jumlah_produksi: int
@@ -121,7 +121,7 @@ JSON Sample:
     "action": "CREATE",
     "identifier": {
         "tgl_distribusi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_mitra_bisnis": 1,
         "id_jenis_produk": 1
@@ -133,7 +133,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "distribusi_susu", "action": "CREATE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_ternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 10000, "harga_berlaku": 2000}}
+{"source_table": "distribusi_susu", "action": "CREATE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_peternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 10000, "harga_berlaku": 2000}}
 
 ##### DELETE #####
 # Indented
@@ -142,7 +142,7 @@ JSON Sample:
     "action": "DELETE",
     "identifier": {
         "tgl_distribusi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_mitra_bisnis": 1,
         "id_jenis_produk": 1
@@ -154,7 +154,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "distribusi_susu", "action": "DELETE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_ternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 10000, "harga_berlaku": 2000}}
+{"source_table": "distribusi_susu", "action": "DELETE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_peternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 10000, "harga_berlaku": 2000}}
 
 ##### UPDATE #####
 # Indented
@@ -163,7 +163,7 @@ JSON Sample:
     "action": "UPDATE",
     "identifier": {
         "tgl_distribusi": "2023-12-23",
-        "id_unit_ternak": 1,
+        "id_unit_peternak": 1,
         "id_lokasi": 27696,
         "id_mitra_bisnis": 1,
         "id_jenis_produk": 1
@@ -177,14 +177,14 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "distribusi_susu", "action": "UPDATE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_ternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 8000, "harga_berlaku": 2500, "prev_jumlah": 10000, "prev_harga_berlaku": 2000}}
+{"source_table": "distribusi_susu", "action": "UPDATE", "identifier": {"tgl_distribusi": "2023-12-23", "id_unit_peternak": 1, "id_lokasi": 27696, "id_mitra_bisnis": 1, "id_jenis_produk": 1}, "amount": {"jumlah": 8000, "harga_berlaku": 2500, "prev_jumlah": 10000, "prev_harga_berlaku": 2000}}
 
 """
 
 # Event
 class IdentifierFactDistribusi(pydantic.BaseModel):
     tgl_distribusi: date
-    id_unit_ternak: int
+    id_unit_peternak: int
     id_lokasi: int
     id_mitra_bisnis: int
     id_jenis_produk: int
@@ -209,7 +209,7 @@ class EventFactDistribusi(pydantic.BaseModel):
 class TableFactDistribusi(pydantic.BaseModel):
     id_waktu: int
     id_lokasi: int
-    id_unit_ternak: int
+    id_unit_peternak: int
     id_mitra_bisnis: int
     id_jenis_produk: int
     jumlah_distribusi: int
@@ -224,7 +224,7 @@ Source:
 class TableFactPopulasi(pydantic.BaseModel):
     id_waktu: int
     id_lokasi: int
-    id_unit_ternak: int
+    id_unit_peternak: int
     jenis_kelamin: str
     tipe_ternak: str
     tipe_usia: str
@@ -262,7 +262,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "history_populasi", "action": "CREATE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_peternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
+{"source_table": "history_populasi", "action": "CREATE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_unit_peternak": 2, "id_lokasi": 27696}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
 
 ##### DELETE #####
 # Indented
@@ -286,7 +286,7 @@ JSON Sample:
 }
 
 # Flatten
-{"source_table": "history_populasi", "action": "DELETE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_peternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
+{"source_table": "history_populasi", "action": "DELETE", "identifier": {"tgl_pencatatan": "2023-12-23", "id_unit_ternak": 2}, "amount": {"jml_pedaging_jantan": 10, "jml_pedaging_betina": 10, "jml_pedaging_anakan_jantan": 10, "jml_pedaging_anakan_betina": 10, "jml_perah_jantan": 10, "jml_perah_betina": 10, "jml_perah_anakan_jantan": 10, "jml_perah_anakan_betina": 10}}
 
 ##### UPDATE #####
 # Indented
@@ -324,7 +324,8 @@ JSON Sample:
 
 class IdentifierFactPopulasi(pydantic.BaseModel):
     tgl_pencatatan: date
-    id_peternak: int
+    id_unit_peternak: int
+    id_lokasi: int
 
 class AmountFactPopulasi(pydantic.BaseModel):
     jml_pedaging_jantan: int

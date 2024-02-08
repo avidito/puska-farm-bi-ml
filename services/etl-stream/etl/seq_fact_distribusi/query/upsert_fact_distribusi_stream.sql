@@ -1,7 +1,7 @@
 INSERT INTO fact_distribusi_stream (
   id_waktu,
   id_lokasi,
-  id_unit_ternak,
+  id_unit_peternak,
   id_mitra_bisnis,
   id_jenis_produk,
   jumlah_distribusi,
@@ -13,7 +13,7 @@ INSERT INTO fact_distribusi_stream (
 VALUES (
   :id_waktu,
   :id_lokasi,
-  :id_unit_ternak,
+  :id_unit_peternak,
   :id_mitra_bisnis,
   :id_jenis_produk,
   :jumlah_distribusi,
@@ -22,7 +22,7 @@ VALUES (
   CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Jakarta',
   CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Jakarta'
 )
-ON CONFLICT (id_waktu, id_lokasi, id_unit_ternak, id_mitra_bisnis, id_jenis_produk)
+ON CONFLICT (id_waktu, id_lokasi, id_unit_peternak, id_mitra_bisnis, id_jenis_produk)
 DO UPDATE SET
   jumlah_distribusi = EXCLUDED.jumlah_distribusi + fact_distribusi_stream.jumlah_distribusi,
   harga_rata_rata = (EXCLUDED.jumlah_penjualan + fact_distribusi_stream.jumlah_penjualan) / (EXCLUDED.jumlah_distribusi + fact_distribusi_stream.jumlah_distribusi),
